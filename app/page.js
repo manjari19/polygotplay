@@ -2,83 +2,146 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
+
+/* --- Minimal, sleek SVG logo (no emoji) --- */
+function LogoMark({ className = "h-12 w-12" }) {
+  return (
+    <svg viewBox="0 0 64 64" className={className} aria-hidden="true">
+      <defs>
+        <linearGradient id="ppg" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0%" stopColor="#60A5FA" />
+          <stop offset="50%" stopColor="#8B5CF6" />
+          <stop offset="100%" stopColor="#F472B6" />
+        </linearGradient>
+        <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="2" result="b" />
+          <feBlend in="SourceGraphic" in2="b" mode="normal" />
+        </filter>
+      </defs>
+      <g filter="url(#soft)">
+        <rect x="6" y="6" width="52" height="52" rx="16" fill="url(#ppg)" />
+        <path
+          d="M24 52c6-2 10-6 12-12"
+          stroke="#fff"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          opacity=".5"
+        />
+        <circle cx="44" cy="20" r="3" fill="#fff" opacity=".9" />
+      </g>
+    </svg>
+  );
+}
 
 export default function Home() {
   const [selectedLang, setSelectedLang] = useState(null);
   const router = useRouter();
+  const reduceMotion = useReducedMotion();
 
   const LANGUAGES = [
-    { code: "fr", label: "🇫🇷 Français", placeholder: "/placeholder-fr.png" },
-    { code: "ja", label: "🇯🇵 日本語", placeholder: "/placeholder-ja.png" },
-    { code: "es", label: "🇪🇸 Español", placeholder: "/placeholder-es.png" },
-    { code: "zh", label: "🇨🇳 中文", placeholder: "/placeholder-zh.png" },
+    { code: "fr", placeholder: "/img/fr.png" },
+    { code: "ja", placeholder: "/img/ja.png" },
+    { code: "es", placeholder: "/img/es.png" },
+    { code: "zh", placeholder: "/img/zh.png" },
   ];
 
   const handleContinue = () => {
-    if (selectedLang) {
-      router.push(`/episodes?lang=${selectedLang}`);
-    }
+    if (selectedLang) router.push(`/episodes?lang=${selectedLang}`);
+  };
+
+  // Animation presets
+  const fadeUp = {
+    hidden: { opacity: 0, y: reduceMotion ? 0 : 8 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+  };
+
+  const gridStagger = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.1 } },
+  };
+
+  const cardVariant = {
+    hidden: { opacity: 0, scale: 0.96 },
+    visible: { opacity: 1, scale: 1, transition: { duration: 0.4, ease: "easeOut" } },
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#FFF8EE] text-[#1F1F1F]">
-      {/* Title */}
-      <motion.h1
-        className="text-5xl md:text-6xl font-bold mb-6"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+    <div className="min-h-screen bg-[#FFF8EE] text-[#1F1F1F] flex flex-col items-center justify-center px-6 py-12">
+      {/* Header */}
+      <motion.div
+        variants={fadeUp}
+        initial="hidden"
+        animate="visible"
+        className="flex flex-col items-center text-center mb-12"
       >
-        🌍 PolyglotPlay
-      </motion.h1>
+        <div className="flex items-center gap-3 mb-2">
+          <LogoMark />
+          <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight">
+            Polyglot<span className="text-blue-600">Play</span>
+          </h1>
+        </div>
+        <p className="text-lg sm:text-xl text-zinc-700">
+          Learn through play, one story at a time.
+        </p>
+      </motion.div>
 
-      {/* Subtitle */}
-      <motion.p
-        className="text-2xl md:text-3xl text-center mb-10"
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
+      {/* Language Tiles (2x2 grid, large 1:1 squares) */}
+      <motion.div
+        variants={gridStagger}
+        initial="hidden"
+        animate="visible"
+        className="grid grid-cols-1 sm:grid-cols-2 gap-10 sm:gap-14 place-items-center"
       >
-        Learn through play, one story at a time.
-      </motion.p>
-
-      {/* Language Cards */}
-      <div className="grid grid-cols-2 gap-6 md:gap-8">
         {LANGUAGES.map((lang) => (
-          <motion.div
+          <motion.button
             key={lang.code}
+            type="button"
+            variants={cardVariant}
             onClick={() => setSelectedLang(lang.code)}
-            className={`cursor-pointer p-6 md:p-10 rounded-2xl text-center text-2xl md:text-3xl font-medium border-2 transition ${
-              selectedLang === lang.code
-                ? "bg-[#E8FFF4] border-[#FF7F5C] scale-105"
-                : "bg-white border-[#E8FFF4] hover:scale-105"
-            }`}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            className={`group relative overflow-hidden rounded-3xl border-2 transition-all duration-300
+              ${selectedLang === lang.code ? "border-[#FF7F5C]" : "border-transparent"}
+              focus:outline-none focus-visible:ring-4 focus-visible:ring-orange-300`}
           >
-            <img
-              src={lang.placeholder}
-              alt={`${lang.label} placeholder`}
-              className="w-16 h-16 md:w-20 md:h-20 mx-auto mb-4"
-            />
-            {lang.label}
-          </motion.div>
+            <div className="relative aspect-square w-72 sm:w-80 md:w-96 rounded-3xl overflow-hidden">
+              {/* soft glow */}
+              <div
+                className={`absolute inset-0 rounded-3xl transition-all
+                  ${
+                    selectedLang === lang.code
+                      ? "ring-8 ring-orange-100"
+                      : "group-hover:ring-8 group-hover:ring-orange-50"
+                  }`}
+              />
+              <img
+                src={lang.placeholder}
+                alt={`${lang.code} language`}
+                className="absolute inset-0 w-full h-full object-cover rounded-3xl shadow-lg
+                           transition-transform duration-500 ease-out group-hover:scale-[1.06]"
+                draggable={false}
+              />
+            </div>
+          </motion.button>
         ))}
-      </div>
+      </motion.div>
 
       {/* Continue Button */}
-      {selectedLang && (
-        <motion.button
-          onClick={handleContinue}
-          className="mt-10 px-8 py-4 rounded-full bg-[#FF7F5C] text-white text-2xl font-semibold shadow-md hover:bg-[#e96d4f] transition"
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-        >
-          Continue →
-        </motion.button>
-      )}
+      <motion.div
+        variants={fadeUp}
+        initial="hidden"
+        animate={selectedLang ? "visible" : "hidden"}
+        className="flex justify-center"
+      >
+        {selectedLang && (
+          <button
+            onClick={handleContinue}
+            className="mt-12 px-10 py-4 rounded-full bg-[#FF7F5C] text-white text-xl font-semibold shadow-md
+                       hover:bg-[#e96d4f] active:translate-y-[1px] transition"
+          >
+            Continue →
+          </button>
+        )}
+      </motion.div>
     </div>
   );
 }
