@@ -1,0 +1,32 @@
+{
+    "id": "ep_intro",
+    "nodes": [
+      {
+        "id": "n0",
+        "lines": {
+          "en": "A student waves at you on campus.",
+          "fr": "Un étudiant vous fait signe sur le campus.",
+          "zh": "你在校园里看到一位学生向你挥手。",
+          "ja": "キャンパスで学生があなたに手を振っています。",
+          "es": "Un estudiante te saluda en el campus."
+        },
+        "expected_intent": "greet",
+        "next_success": "n1",
+        "vocab": ["bonjour"]
+      },
+      {
+        "id": "n1",
+        "lines": {
+          "en": "They ask your name.",
+          "fr": "Ils vous demandent votre nom.",
+          "zh": "他们问你的名字。",
+          "ja": "名前を聞かれます。",
+          "es": "Te preguntan tu nombre."
+        },
+        "expected_intent": "say_name",
+        "next_success": "end",
+        "vocab": ["je m'appelle"]
+      }
+    ]
+  }
+  
