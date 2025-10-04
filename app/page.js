@@ -63,7 +63,7 @@ export default function Home() {
 
   const cardVariant = {
     hidden: { opacity: 0, scale: 0.96 },
-    visible: { opacity: 1, scale: 1, transition: { duration: 0.4, ease: "easeOut" } },
+    visible: { opacity: 1, scale: 1, transition: { duration: 0.1, ease: "easeOut" } },
   };
 
   return (
@@ -98,26 +98,22 @@ export default function Home() {
             key={lang.code}
             type="button"
             variants={cardVariant}
-            onClick={() => setSelectedLang(lang.code)}
-            className={`group relative overflow-hidden rounded-3xl border-2 transition-all duration-300
-              ${selectedLang === lang.code ? "border-[#FF7F5C]" : "border-transparent"}
+            onClick={() => router.push(`/episodes?lang=${lang.code}`)}
+            className={`group relative overflow-hidden rounded-3xl transition-all duration-300 shadow-xl
               focus:outline-none focus-visible:ring-4 focus-visible:ring-orange-300`}
+            whileHover={{ scale: 1.06 }}
+            whileTap={{ scale: 0.98 }}
           >
             <div className="relative aspect-square w-72 sm:w-80 md:w-96 rounded-3xl overflow-hidden">
               {/* soft glow */}
               <div
                 className={`absolute inset-0 rounded-3xl transition-all
-                  ${
-                    selectedLang === lang.code
-                      ? "ring-8 ring-orange-100"
-                      : "group-hover:ring-8 group-hover:ring-orange-50"
-                  }`}
+                  group-hover:ring-8 group-hover:ring-orange-50`}
               />
               <img
                 src={lang.placeholder}
                 alt={`${lang.code} language`}
-                className="absolute inset-0 w-full h-full object-cover rounded-3xl shadow-lg
-                           transition-transform duration-500 ease-out group-hover:scale-[1.06]"
+                className="absolute inset-0 w-full h-full object-cover rounded-3xl shadow-lg"
                 draggable={false}
               />
             </div>
