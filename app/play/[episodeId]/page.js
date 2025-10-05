@@ -50,6 +50,7 @@ export default function PlayPage({ params }) {
   const [conversation, setConversation] = useState([]);
   const [currentMessage, setCurrentMessage] = useState("");
   const [error, setError] = useState(null);
+  const [speakingRole, setSpeakingRole] = useState(null);
 
   const BACKGROUNDS = {
     fr: "/img/france.png",
@@ -156,7 +157,7 @@ export default function PlayPage({ params }) {
       setConversation([{ role: 'assistant', text: data.message }]);
       
       // Play initial audio
-      playAudioResponse(data.audioUrl);
+      playAudioResponse(data.audioUrl, "assistant");
     } catch (error) {
       console.error('Failed to start session:', error);
       setError('Failed to start session. Please make sure the backend server is running.');
@@ -200,8 +201,12 @@ export default function PlayPage({ params }) {
       ]);
       setCurrentMessage(data.message);
       
-      // Play audio response
-      playAudioResponse(data.audioUrl);
+      // Play user audio (simulate, since only assistant audio is returned)
+      if (data.userAudioUrl) {
+        playAudioResponse(data.userAudioUrl, "user");
+      }
+      // Play assistant audio
+      playAudioResponse(data.audioUrl, "assistant");
       
       // Check if conversation is complete
       if (data.isComplete) {
@@ -216,19 +221,22 @@ export default function PlayPage({ params }) {
   }
 
   // Play audio response
-  async function playAudioResponse(audioUrl) {
+  async function playAudioResponse(audioUrl, role = "assistant") {
     try {
-      // Stop any currently playing audio
       if (currentAudioRef.current) {
         currentAudioRef.current.pause();
         currentAudioRef.current = null;
       }
-      
+      setSpeakingRole(role);
       const audio = new Audio(audioUrl);
       currentAudioRef.current = audio;
       await audio.play();
+      audio.onended = () => {
+        setSpeakingRole(null);
+      };
     } catch (error) {
       console.error('Failed to play audio:', error);
+      setSpeakingRole(null);
     }
   }
 
@@ -385,14 +393,15 @@ export default function PlayPage({ params }) {
         </div>
       )} */}
       
-      {/* Characters row (anchored low on screen) */}
-      <div className="pointer-events-none absolute bottom-6 md:bottom-12 left-0 right-0 w-full flex items-end justify-between px-[10%]">
+      {/* Characters row (anchored higher on screen) */}
+      <div className="pointer-events-none absolute bottom-32 md:bottom-40 left-0 right-0 w-full flex items-end justify-between px-[8%]">
         {/* Panda (assistant, left) */}
         <CharacterWithBubble
           side="left"
           imgSrc="/img/panda.png"
           alt="Panda character"
           bubbleText={assistantText}
+          isSpeaking={speakingRole === "assistant"}
         />
 
         {/* Llama (user, right) */}
@@ -401,6 +410,7 @@ export default function PlayPage({ params }) {
           imgSrc="/img/llama.png"
           alt="Llama character"
           bubbleText={userText}
+          isSpeaking={recording}
         />
       </div>
     </div>
@@ -409,13 +419,16 @@ export default function PlayPage({ params }) {
 
 /* ========== Components ========== */
 
-function CharacterWithBubble({ side, imgSrc, alt, bubbleText }) {
+function CharacterWithBubble({ side, imgSrc, alt, bubbleText, isSpeaking }) {
   const translateClass =
     side === "left" ? "translate-x-[-4%]" : "translate-x-[4%]";
   const bubbleColor =
     side === "left"
       ? "bg-blue-100 text-blue-900 border-blue-200"
       : "bg-gray-100 text-gray-900 border-gray-200";
+
+  // Animation for audio playing
+  const speaking = isSpeaking && bubbleText && bubbleText.length > 0;
 
   return (
     <motion.div
@@ -433,11 +446,12 @@ function CharacterWithBubble({ side, imgSrc, alt, bubbleText }) {
         alt={alt}
         className="rounded-full shadow-xl select-none object-contain pointer-events-auto"
         initial={{ scale: 0.95 }}
+        animate={speaking ? { scale: [1, 1.08, 1], y: [0, -10, 0] } : { scale: 1, y: 0 }}
+        transition={speaking ? { duration: 0.8, repeat: Infinity, repeatType: 'loop' } : { type: "spring", stiffness: 200 }}
         whileHover={{ scale: 1.04, rotate: side === "left" ? -1.5 : 1.5 }}
-        transition={{ type: "spring", stiffness: 200 }}
         style={{
-          width: "clamp(240px, 28vw, 340px)",
-          height: "clamp(240px, 28vw, 340px)",
+          width: "clamp(360px, 42vw, 510px)",
+          height: "clamp(360px, 42vw, 510px)",
         }}
       />
     </motion.div>
@@ -455,7 +469,7 @@ function SpeechBubble({ children, side, className = "" }) {
       initial={{ opacity: 0, y: 24, scale: 0.96 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className={`pointer-events-auto relative mb-6 max-w-2xl text-2xl md:text-3xl leading-snug px-10 py-8 rounded-3xl shadow-2xl bg-white/10 ${className}`}
+      className={`pointer-events-auto relative mb-8 max-w-xl text-2xl md:text-3xl leading-snug px-8 py-6 rounded-3xl shadow-2xl bg-white/10 font-bold text-black ${className}`}
       style={{
         backdropFilter: "blur(2px)",
         fontFamily: 'Arial, sans-serif',
@@ -463,7 +477,7 @@ function SpeechBubble({ children, side, className = "" }) {
     >
       {children}
       <span
-        className={`absolute -bottom-2 h-6 w-6 bg-inherit ${tailSide}`}
+        className={`absolute -bottom-2 h-8 w-8 bg-inherit ${tailSide}`}
         style={{
           backgroundClip: "padding-box",
         }}
