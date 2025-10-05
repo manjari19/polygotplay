@@ -67,10 +67,10 @@ export default function PlayPage({ params }) {
       directions: "/img/spanish-directions.png",
     },
     zh: {
-      intro: "/img/china-intro.png",
-      restaurant: "/img/china-restaurant.png",
-      airport: "/img/china-travel.png",
-      directions: "/img/china-directions.png",
+      intro: "/img/chinese-intro.png",
+      restaurant: "/img/chinese-restaurant.png",
+      airport: "/img/chinese-travel.png",
+      directions: "/img/chinese-directions.png",
     },
     fr: {
       intro: "/img/france.png",
