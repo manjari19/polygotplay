@@ -71,6 +71,7 @@ class AudioProcessResponse(BaseModel):
     audioUrl: str
     isComplete: bool
     currentStep: str
+    userText: str  # Add user's transcribed text
 
 # Helper functions
 def cleanup_expired_sessions():
@@ -206,17 +207,7 @@ async def start_session(request: SessionStartRequest):
         "chinese": "chinese",
         "zh": "chinese",
         "japanese": "japanese",
-        "ja": "japanese",
-        "german": "german",
-        "de": "german",
-        "italian": "italian",
-        "it": "italian",
-        "portuguese": "portuguese",
-        "pt": "portuguese",
-        "russian": "russian",
-        "ru": "russian",
-        "korean": "korean",
-        "ko": "korean"
+        "ja": "japanese"
     }
     
     language_code = request.language.lower()
@@ -322,9 +313,14 @@ async def process_audio(session_id: str, audio: UploadFile = File(...)):
             user_input = stt_result
             language_code = ''
         
+        # Log the user's transcribed text for debugging
+        print(f"User transcribed text: '{user_input}'")
+        print(f"Detected language code: '{language_code}'")
+        
         if not user_input or user_input.strip() == '':
             # Don't raise an error, just return a default response
             user_input = "I didn't catch that, could you please repeat?"
+            print(f"Using default user input: '{user_input}'")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Speech-to-text failed: {str(e)}")
     finally:
@@ -358,7 +354,8 @@ async def process_audio(session_id: str, audio: UploadFile = File(...)):
         message=ai_response,
         audioUrl=audio_url,
         isComplete=is_complete,
-        currentStep=current_step["name"]
+        currentStep=current_step["name"],
+        userText=user_input  # Include the user's transcribed text
     )
 
 @app.get("/api/session/{session_id}/status", response_model=SessionStatusResponse)

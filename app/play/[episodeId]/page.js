@@ -58,8 +58,9 @@ export default function PlayPage({ params }) {
     zh: "/img/china.png",
   };
 
-  const assistantText = conversation.find((t) => t.role === "assistant")?.text || "Loading...";
-  const userText = conversation.find((t) => t.role === "user")?.text || "";
+  // Get the most recent messages for each role
+  const assistantText = conversation.filter((t) => t.role === "assistant").pop()?.text || "Loading...";
+  const userText = conversation.filter((t) => t.role === "user").pop()?.text || "";
 
   // build a natural title
   const heading = getScenarioHeading(episodeId, lang);
@@ -186,8 +187,17 @@ export default function PlayPage({ params }) {
       
       const data = await response.json();
       
-      // Update conversation
-      setConversation(prev => [...prev, { role: 'assistant', text: data.message }]);
+      // Log the response for debugging
+      console.log('API Response:', data);
+      console.log('User text:', data.userText);
+      console.log('Assistant text:', data.message);
+      
+      // Update conversation - add both user and assistant messages
+      setConversation(prev => [
+        ...prev,
+        { role: 'user', text: data.userText },
+        { role: 'assistant', text: data.message }
+      ]);
       setCurrentMessage(data.message);
       
       // Play audio response
@@ -358,8 +368,9 @@ export default function PlayPage({ params }) {
         )}
       </div>
       
+      
       {/* Conversation History */}
-      {conversation.length > 1 && (
+      {/* {conversation.length > 1 && (
         <div className="mt-8 max-w-2xl mx-auto bg-white/80 backdrop-blur-sm rounded-lg p-4">
           <h2 className="text-xl font-bold mb-3">Conversation</h2>
           {conversation.map((msg, idx) => (
@@ -372,8 +383,8 @@ export default function PlayPage({ params }) {
             </div>
           ))}
         </div>
-      )}
-
+      )} */}
+      
       {/* Characters row (anchored low on screen) */}
       <div className="pointer-events-none absolute bottom-6 md:bottom-12 left-0 right-0 w-full flex items-end justify-between px-[10%]">
         {/* Panda (assistant, left) */}
