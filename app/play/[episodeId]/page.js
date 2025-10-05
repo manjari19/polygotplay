@@ -147,6 +147,7 @@ export default function PlayPage({ params }) {
       {/* Updated Title */}
       <motion.h1
         className="mt-16 text-3xl md:text-4xl font-bold text-center bg-white/60 backdrop-blur-sm rounded-2xl px-6 py-3 shadow-sm"
+        style={{ fontFamily: 'Arial, sans-serif' }}
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
@@ -229,17 +230,18 @@ function SpeechBubble({ children, side, className = "" }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12, scale: 0.98 }}
+      initial={{ opacity: 0, y: 24, scale: 0.96 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.35, ease: "easeOut" }}
-      className={`pointer-events-auto relative mb-4 md:mb-6 max-w-sm text-base md:text-lg leading-snug px-5 py-3 rounded-2xl border shadow-md ${className}`}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className={`pointer-events-auto relative mb-6 max-w-2xl text-2xl md:text-3xl leading-snug px-10 py-8 rounded-3xl shadow-2xl bg-white/10 ${className}`}
       style={{
         backdropFilter: "blur(2px)",
+        fontFamily: 'Arial, sans-serif',
       }}
     >
       {children}
       <span
-        className={`absolute -bottom-2 h-4 w-4 bg-inherit border-inherit border-l border-b ${tailSide}`}
+        className={`absolute -bottom-2 h-6 w-6 bg-inherit ${tailSide}`}
         style={{
           backgroundClip: "padding-box",
         }}
