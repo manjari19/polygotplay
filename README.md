@@ -1,3 +1,13 @@
+PolyGlotPlay is an AI-powered language tool that helps you learn essential beginner language skills through a fun, choose-your-own-adventure experience.
+🌍 4 Languages
+🎭 4 Interactive Scenarios
+🛤️ Endless Story Paths
+Powered by:
+🎙️ ElevenLabs – Realistic voice imitation for lifelike conversations
+🧠 Google Gemini – Smart, dynamic dialogue generation for natural flow
+Simply choose a language and a scenario. Then, jump into a real-time voice conversation with your AI teacher — practicing key terms, pronunciation, and real-world speaking skills as you continue the story with your voice.
+By the end, you're not just learning — you're ready to land, speak, and explore the new world.
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
@@ -14,20 +24,11 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result + make sure to read README_integrated.md for more input.
 
 You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
 ## Deploy on Vercel
 
