@@ -478,9 +478,9 @@ export default function PlayPage({ params }) {
             <div className="text-sm text-gray-600">Speak loudly and clearly (minimum 1 second)</div>
           </div>
         ) : isLoading ? (
-          <div className="flex items-center justify-center gap-2">
-            <div className="w-2.5 h-2.5 bg-blue-500 rounded-full animate-spin"></div>
-            Processing...
+          <div className="inline-flex items-center justify-center gap-3 px-4 py-2 rounded-xl bg-black/70 text-white backdrop-blur-md shadow-lg border border-white/20">
+            <div className="w-5 h-5 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+            <span className="tracking-wide">Processing…</span>
           </div>
         ) : sessionId ? (
           <div className="flex flex-col items-center gap-1">
