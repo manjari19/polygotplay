@@ -52,15 +52,44 @@ export default function PlayPage({ params }) {
   const [error, setError] = useState(null);
   const [speakingRole, setSpeakingRole] = useState(null);
 
-  const BACKGROUNDS = {
-    fr: "/img/france.png",
-    ja: "/img/japan.png",
-    es: "/img/spain.png",
-    zh: "/img/china.png",
+  // Hardcoded background images per language and scenario
+  const BG_BY_LANG_AND_SCENARIO = {
+    ja: {
+      intro: "/img/japan.png",
+      restaurant: "/img/japanese-restaurant.png",
+      airport: "/img/japanese-airport.png",
+      directions: "/img/japanese-directions.png",
+    },
+    es: {
+      intro: "/img/spain.png",
+      restaurant: "/img/spanish-restaurant.png",
+      airport: "/img/spanish-airport.png",
+      directions: "/img/spanish-directions.png",
+    },
+    zh: {
+      intro: "/img/china-intro.png",
+      restaurant: "/img/china-restaurant.png",
+      airport: "/img/china-travel.png",
+      directions: "/img/china-directions.png",
+    },
+    fr: {
+      intro: "/img/france.png",
+      restaurant: "/img/restaurant.png",
+      airport: "/img/travel.png",
+      directions: "/img/directions.png",
+    },
   };
 
+  function getBackgroundFor(langCode, scenarioId) {
+    if (!langCode || !scenarioId) return null;
+    const byLang = BG_BY_LANG_AND_SCENARIO[langCode];
+    if (!byLang) return null;
+    return byLang[scenarioId] || null;
+  }
+
   // Get the most recent messages for each role
-  const assistantText = conversation.filter((t) => t.role === "assistant").pop()?.text || "Loading...";
+  const assistantText =
+    conversation.filter((t) => t.role === "assistant").pop()?.text || "Loading...";
   const userText = conversation.filter((t) => t.role === "user").pop()?.text || "";
 
   // build a natural title
@@ -120,17 +149,17 @@ export default function PlayPage({ params }) {
       
       // Map frontend IDs to Python scenario names
       const scenarioMap = {
-        'restaurant': 'restaurant',
-        'intro': 'introductions',
-        'airport': 'travel',
-        'directions': 'directions'
+        restaurant: "restaurant",
+        intro: "introductions",
+        airport: "travel",
+        directions: "directions",
       };
       
       const scenario = scenarioMap[episodeId] || 'restaurant';
       console.log('🔍 DEBUG: About to initializeSession with', { scenario, lang });
       initializeSession(scenario, lang);
     }
-    
+
     return () => {
       console.log('🔍 DEBUG: useEffect cleanup called');
       isMountedRef.current = false;
@@ -142,23 +171,23 @@ export default function PlayPage({ params }) {
     console.log('🔍 DEBUG: initializeSession called with', { scenarioId, language, sessionId: sessionId });
     setIsLoading(true);
     setError(null);
-    
+
     const requestData = { scenario: scenarioId, language };
-    console.log('Sending session start request:', requestData);
-    
+    console.log("Sending session start request:", requestData);
+
     try {
-      const response = await fetch('http://localhost:8000/api/session/start', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestData)
+      const response = await fetch("http://localhost:8000/api/session/start", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(requestData),
       });
-      
+
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('Session start failed:', response.status, errorText);
+        console.error("Session start failed:", response.status, errorText);
         throw new Error(`Failed to start session: ${response.statusText}`);
       }
-      
+
       const data = await response.json();
       console.log('🔍 DEBUG: Session start response received:', {
         sessionId: data.sessionId,
@@ -174,8 +203,8 @@ export default function PlayPage({ params }) {
       // Play initial audio
       playAudioResponse(data.audioUrl, "assistant");
     } catch (error) {
-      console.error('Failed to start session:', error);
-      setError('Failed to start session. Please make sure the backend server is running.');
+      console.error("Failed to start session:", error);
+      setError("Failed to start session. Please make sure the backend server is running.");
     } finally {
       setIsLoading(false);
     }
@@ -184,52 +213,44 @@ export default function PlayPage({ params }) {
   // Process user audio
   async function processAudio(audioBlob) {
     if (!sessionId) return;
-    
+
     setIsLoading(true);
     setError(null);
-    
+
     const formData = new FormData();
-    formData.append('audio', audioBlob, 'recording.webm');
-    
+    formData.append("audio", audioBlob, "recording.webm");
+
     try {
       const response = await fetch(`http://localhost:8000/api/session/${sessionId}/process`, {
-        method: 'POST',
-        body: formData
+        method: "POST",
+        body: formData,
       });
-      
+
       if (!response.ok) {
         throw new Error(`Failed to process audio: ${response.statusText}`);
       }
-      
+
       const data = await response.json();
-      
-      // Log the response for debugging
-      console.log('API Response:', data);
-      console.log('User text:', data.userText);
-      console.log('Assistant text:', data.message);
-      
+
       // Update conversation - add both user and assistant messages
-      setConversation(prev => [
+      setConversation((prev) => [
         ...prev,
-        { role: 'user', text: data.userText },
-        { role: 'assistant', text: data.message }
+        { role: "user", text: data.userText },
+        { role: "assistant", text: data.message },
       ]);
       setCurrentMessage(data.message);
-      
-      // Play user audio (simulate, since only assistant audio is returned)
+
       if (data.userAudioUrl) {
         playAudioResponse(data.userAudioUrl, "user");
       }
-      // Play assistant audio
       playAudioResponse(data.audioUrl, "assistant");
-      
-      // Check if conversation is complete
+
       if (data.isComplete) {
-        console.log('Conversation complete!');
+        console.log("Conversation complete!");
       }
     } catch (error) {
-      console.error('Failed to process audio:', error);
-      setError('Failed to process audio. Please try again.');
+      console.error("Failed to process audio:", error);
+      setError("Failed to process audio. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -255,7 +276,7 @@ export default function PlayPage({ params }) {
         setSpeakingRole(null);
       };
     } catch (error) {
-      console.error('Failed to play audio:', error);
+      console.error("Failed to play audio:", error);
       setSpeakingRole(null);
     }
   }
@@ -264,11 +285,10 @@ export default function PlayPage({ params }) {
     if (!navigator.mediaDevices) {
       return;
     }
-    
     if (!sessionId) {
       return;
     }
-    
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: {
@@ -280,44 +300,40 @@ export default function PlayPage({ params }) {
           latency: 0,
           googEchoCancellation: true,
           googNoiseSuppression: true,
-          googAutoGainControl: true
-        }
+          googAutoGainControl: true,
+        },
       });
-      
+
       const mediaRecorder = new window.MediaRecorder(stream, {
-        mimeType: 'audio/webm;codecs=opus'
+        mimeType: "audio/webm;codecs=opus",
       });
-      
+
       mediaRecorderRef.current = mediaRecorder;
       audioChunksRef.current = [];
-      
+
       mediaRecorder.ondataavailable = (e) => {
         if (e.data.size > 0) audioChunksRef.current.push(e.data);
       };
-      
+
       mediaRecorder.onstop = async () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-        
-        // Check if component is still mounted
+        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
+
         if (isMountedRef.current) {
           setAudioURL(URL.createObjectURL(audioBlob));
-          
-          // Send to backend for processing
           await processAudio(audioBlob);
         }
       };
-      
+
       recordingStartTimeRef.current = Date.now();
       mediaRecorder.start(100); // Collect data every 100ms
     } catch (error) {
-      console.error('Error starting recording:', error);
+      console.error("Error starting recording:", error);
       setRecording(false);
     }
   }
 
   function stopRecording() {
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
-      // Check minimum recording duration (1 second)
       const recordingDuration = Date.now() - recordingStartTimeRef.current;
       if (recordingDuration < 1000) {
         setRecording(false);
@@ -325,7 +341,6 @@ export default function PlayPage({ params }) {
       }
       mediaRecorderRef.current.stop();
     }
-    // Don't set recording state here, let the onstop handler handle it
   }
 
   return (
@@ -333,26 +348,29 @@ export default function PlayPage({ params }) {
       className="relative min-h-screen text-[#1F1F1F] flex flex-col items-center overflow-hidden"
       style={{
         backgroundImage:
-          lang && BACKGROUNDS[lang] ? `url(${BACKGROUNDS[lang]})` : "none",
+          lang && getBackgroundFor(lang, episodeId) ? `url(${getBackgroundFor(lang, episodeId)})` : "none",
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
+      {/* Subtle horizon wash so foreground reads clearly */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-white/70 via-white/25 to-transparent" />
+
       {/* Back button (top-left) */}
       <motion.button
         onClick={handleBack}
         aria-label="Back to scenarios"
-        className="fixed left-4 top-4 z-50 px-10 py-5 rounded-3xl bg-white/0 backdrop-blur-sm text-2xl font-bold shadow-lg hover:bg-white transition"
-        whileHover={{ scale: 1.07 }}
+        className="fixed left-4 top-4 z-50 px-6 py-3 rounded-full bg-white/80 backdrop-blur-md text-base md:text-lg font-semibold shadow-lg hover:bg-white transition"
+        whileHover={{ scale: 1.06 }}
         whileTap={{ scale: 0.98 }}
       >
-        ◀ Back 
+        ◀ Back
       </motion.button>
 
-      {/* Updated Title */}
+      {/* Title */}
       <motion.h1
-        className="mt-16 text-4xl md:text-5xl font-bold text-center bg-white/60 backdrop-blur-sm rounded-2xl px-8 py-5 shadow-sm"
-        style={{ fontFamily: 'Arial, sans-serif' }}
+        className="mt-16 text-3xl md:text-5xl font-bold text-center bg-white/80 backdrop-blur-md rounded-2xl px-6 py-4 shadow-sm z-10"
+        style={{ fontFamily: "Arial, sans-serif" }}
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
@@ -362,59 +380,43 @@ export default function PlayPage({ params }) {
 
       {/* Error Display */}
       {error && (
-        <div className="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg max-w-2xl mx-auto">
+        <div className="mt-4 p-4 bg-red-50 border border-red-200 text-red-700 rounded-2xl max-w-2xl mx-auto z-10 shadow">
           {error}
         </div>
       )}
 
-      {/* Recording status */}
-      <div className="mt-4 text-lg font-semibold text-center">
+      {/* Recording / status */}
+      <div className="mt-4 text-lg font-semibold text-center z-10">
         {recording ? (
           <div className="flex flex-col items-center justify-center gap-2">
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+              <div className="w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse"></div>
               Recording... Speak clearly and release 'r' to stop
             </div>
-            <div className="text-sm text-gray-600">
-              Speak loudly and clearly (minimum 1 second)
-            </div>
+            <div className="text-sm text-gray-600">Speak loudly and clearly (minimum 1 second)</div>
           </div>
         ) : isLoading ? (
           <div className="flex items-center justify-center gap-2">
-            <div className="w-3 h-3 bg-blue-500 rounded-full animate-spin"></div>
+            <div className="w-2.5 h-2.5 bg-blue-500 rounded-full animate-spin"></div>
             Processing...
           </div>
         ) : sessionId ? (
           <div className="flex flex-col items-center gap-1">
             <div>Hold 'r' to record</div>
-            <div className="text-sm text-gray-600">
-              Make sure your microphone is working and speak clearly
-            </div>
+            <div className="text-sm text-gray-600">Make sure your microphone is working and speak clearly</div>
           </div>
         ) : (
           "Initializing session..."
         )}
       </div>
-      
-      
-      {/* Conversation History */}
-      {/* {conversation.length > 1 && (
-        <div className="mt-8 max-w-2xl mx-auto bg-white/80 backdrop-blur-sm rounded-lg p-4">
-          <h2 className="text-xl font-bold mb-3">Conversation</h2>
-          {conversation.map((msg, idx) => (
-            <div key={idx} className={`mb-2 p-2 rounded ${
-              msg.role === 'assistant'
-                ? 'bg-blue-100 text-blue-900'
-                : 'bg-gray-100 text-gray-900'
-            }`}>
-              <strong>{msg.role === 'assistant' ? 'Assistant' : 'You'}:</strong> {msg.text}
-            </div>
-          ))}
-        </div>
-      )} */}
-      
-      {/* Characters row (anchored higher on screen) */}
-      <div className="pointer-events-none absolute bottom-32 md:bottom-40 left-0 right-0 w-full flex items-end justify-between px-[8%]">
+
+      {/* Grounding gradient near bottom */}
+      <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-[18%]">
+        <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-black/5 to-transparent" />
+      </div>
+
+      {/* Characters row */}
+      <div className="pointer-events-none absolute bottom-[2%] md:bottom-[3%] left-0 right-0 w-full flex items-end justify-between px-[6%] md:px-[8%] z-10">
         {/* Panda (assistant, left) */}
         <CharacterWithBubble
           side="left"
@@ -440,66 +442,117 @@ export default function PlayPage({ params }) {
 /* ========== Components ========== */
 
 function CharacterWithBubble({ side, imgSrc, alt, bubbleText, isSpeaking }) {
-  const translateClass =
-    side === "left" ? "translate-x-[-4%]" : "translate-x-[4%]";
-  const bubbleColor =
-    side === "left"
-      ? "bg-blue-100 text-blue-900 border-blue-200"
-      : "bg-gray-100 text-gray-900 border-gray-200";
-
-  // Animation for audio playing
+  const translateClass = side === "left" ? "translate-x-[-1%]" : "translate-x-[1%]";
   const speaking = isSpeaking && bubbleText && bubbleText.length > 0;
 
   return (
     <motion.div
-      className={`relative flex flex-col items-center ${translateClass}`}
+      className={`relative flex flex-col ${side === "left" ? "items-start" : "items-end"} ${translateClass}`}
       initial={{ opacity: 0, y: 60 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
     >
-      <SpeechBubble side={side} className={`${bubbleColor}`}>
+      <SpeechBubble
+        side={side}
+        className={
+          side === "left"
+            ? "bg-white/90 text-gray-900 border border-black/10 shadow-[0_6px_18px_rgba(0,0,0,0.12)]"
+            : "bg-white/90 text-gray-900 border border-black/10 shadow-[0_6px_18px_rgba(0,0,0,0.12)]"
+        }
+      >
         {bubbleText}
       </SpeechBubble>
 
-      <motion.img
-        src={imgSrc}
-        alt={alt}
-        className="rounded-full shadow-xl select-none object-contain pointer-events-auto"
-        initial={{ scale: 0.95 }}
-        animate={speaking ? { scale: [1, 1.08, 1], y: [0, -10, 0] } : { scale: 1, y: 0 }}
-        transition={speaking ? { duration: 0.8, repeat: Infinity, repeatType: 'loop' } : { type: "spring", stiffness: 200 }}
-        whileHover={{ scale: 1.04, rotate: side === "left" ? -1.5 : 1.5 }}
+      {/* Grounded oval shadow under character */}
+      <div
+        className="absolute bottom-[6px] left-1/2 -translate-x-1/2 pointer-events-none"
+        aria-hidden="true"
         style={{
-          width: "clamp(360px, 42vw, 510px)",
-          height: "clamp(360px, 42vw, 510px)",
+          width: "min(40vw, 380px)",
+          height: "18px",
+          background:
+            "radial-gradient(ellipse at center, rgba(0,0,0,0.22) 0%, rgba(0,0,0,0.10) 45%, rgba(0,0,0,0) 70%)",
+          filter: "blur(6px)",
+          opacity: 0.55,
         }}
       />
+
+      {/* Circular avatar frame */}
+      <motion.div
+        className="relative select-none pointer-events-auto rounded-full overflow-hidden ring-4 ring-white/70 shadow-xl bg-white/40 backdrop-blur-sm"
+        initial={{ scale: 1 }}
+        animate={speaking ? { scale: [1, 1.03, 1], y: [0, -5, 0] } : { scale: 1, y: 0 }}
+        transition={speaking ? { duration: 0.9, repeat: Infinity, repeatType: "loop" } : { type: "spring", stiffness: 220 }}
+        whileHover={{ scale: 1.04, rotate: side === "left" ? -1.2 : 1.2 }}
+        style={{
+          width: "clamp(260px, 30vw, 400px)",
+          height: "clamp(260px, 30vw, 400px)",
+          zIndex: 1,
+        }}
+      >
+        {/* Inner soft vignette for depth */}
+        <div className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-tr from-white/10 to-transparent" />
+        <img
+          src={imgSrc}
+          alt={alt}
+          className="h-full w-full object-contain"
+          draggable={false}
+        />
+      </motion.div>
     </motion.div>
   );
 }
 
 function SpeechBubble({ children, side, className = "" }) {
-  const tailSide =
+  // Tail position near the edge that faces the character
+  const tailEdgeClasses =
     side === "left"
-      ? "left-[28%] md:left-[35%] rotate-45"
-      : "right-[28%] md:right-[35%] -rotate-45";
+      ? "left-6 md:left-8"
+      : "right-6 md:right-8";
+
+  // Tail triangle points “down-left” or “down-right” depending on side
+  const tailClipPath =
+    side === "left"
+      ? "polygon(0% 0%, 100% 100%, 0% 100%)"      // ◣
+      : "polygon(0% 100%, 100% 0%, 100% 100%)";   // ◢
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 24, scale: 0.96 }}
+      initial={{ opacity: 0, y: 18, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-      className={`pointer-events-auto relative mb-8 max-w-xl text-2xl md:text-3xl leading-snug px-8 py-6 rounded-3xl shadow-2xl bg-white/10 font-bold text-black ${className}`}
-      style={{
-        backdropFilter: "blur(2px)",
-        fontFamily: 'Arial, sans-serif',
-      }}
+      transition={{ duration: 0.35, ease: "easeOut" }}
+      className={`pointer-events-auto relative mb-3
+                  max-w-[42ch] md:max-w-[52ch]
+                  text-base md:text-2xl leading-snug
+                  pl-7 pr-5 md:pl-8 md:pr-6 py-3.5 md:py-4
+                  rounded-3xl overflow-hidden
+                  bg-white/90 text-gray-900 border border-black/10 shadow-[0_6px_18px_rgba(0,0,0,0.12)]
+                  ${className}`}
+      style={{ backdropFilter: "blur(8px)", fontFamily: "Arial, sans-serif" }}
     >
-      {children}
+      {/* Accent bar (clipped by overflow-hidden) */}
+      <div
+        className={`pointer-events-none absolute inset-y-0 left-0 w-2.5 ${
+          side === "left" ? "bg-blue-400/70" : "bg-emerald-400/70"
+        }`}
+        aria-hidden="true"
+      />
+
+      {/* Text */}
+      <span className="font-medium break-words whitespace-pre-wrap hyphens-auto">
+        {children}
+      </span>
+
+      {/* Tail (triangle, no rotate, so no diamond) */}
       <span
-        className={`absolute -bottom-2 h-8 w-8 bg-inherit ${tailSide}`}
+        aria-hidden="true"
+        className={`pointer-events-none absolute bottom-0 ${tailEdgeClasses} h-4 w-4`}
         style={{
-          backgroundClip: "padding-box",
+          background: "rgba(255,255,255,0.9)",
+          clipPath: tailClipPath,
+          borderLeft: "1px solid rgba(0,0,0,0.08)",
+          borderBottom: "1px solid rgba(0,0,0,0.08)",
+          transform: "translateY(45%)", // visually hugs the bubble edge
         }}
       />
     </motion.div>
