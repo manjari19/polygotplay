@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 
@@ -73,6 +73,56 @@ export default function PlayPage({ params }) {
     }
   }
 
+  // Audio recording state
+  const [recording, setRecording] = useState(false);
+  const [audioURL, setAudioURL] = useState(null);
+  const mediaRecorderRef = useRef(null);
+  const audioChunksRef = useRef([]);
+
+  // Keypress handler for 'r' to record
+  useEffect(() => {
+    function onKeyDown(e) {
+      if (e.key === "r" && !recording) {
+        setRecording(true);
+        startRecording();
+      }
+    }
+    function onKeyUp(e) {
+      if (e.key === "r" && recording) {
+        setRecording(false);
+        stopRecording();
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("keyup", onKeyUp);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("keyup", onKeyUp);
+    };
+  }, [recording]);
+
+  async function startRecording() {
+    if (!navigator.mediaDevices) return;
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const mediaRecorder = new window.MediaRecorder(stream);
+    mediaRecorderRef.current = mediaRecorder;
+    audioChunksRef.current = [];
+    mediaRecorder.ondataavailable = (e) => {
+      if (e.data.size > 0) audioChunksRef.current.push(e.data);
+    };
+    mediaRecorder.onstop = async () => {
+      const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+      setAudioURL(URL.createObjectURL(audioBlob));
+    };
+    mediaRecorder.start();
+  }
+
+  function stopRecording() {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+      mediaRecorderRef.current.stop();
+    }
+  }
+
   return (
     <div
       className="relative min-h-screen text-[#1F1F1F] flex flex-col items-center overflow-hidden"
@@ -103,6 +153,14 @@ export default function PlayPage({ params }) {
       >
         {heading}
       </motion.h1>
+
+      {/* Recording status */}
+      <div className="mt-4 text-lg font-semibold text-center">
+        {recording ? "Recording..." : audioURL ? "Recording finished!" : "Hold 'r' to record"}
+      </div>
+      {audioURL && (
+        <audio controls src={audioURL} className="mt-2" />
+      )}
 
       {/* Characters row (anchored low on screen) */}
       <div className="pointer-events-none absolute bottom-6 md:bottom-12 left-0 right-0 w-full flex items-end justify-between px-[10%]">

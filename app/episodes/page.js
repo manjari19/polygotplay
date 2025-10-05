@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, useReducedMotion } from "framer-motion";
 
@@ -48,6 +48,7 @@ export default function EpisodesPage() {
   const searchParams = useSearchParams();
   const reduceMotion = useReducedMotion();
   const lang = searchParams.get("lang");
+  const [hovered, setHovered] = useState(null);
 
   const langLabel = useMemo(() => (lang && LANG_LABEL[lang]) || "Language not set", [lang]);
 
@@ -122,25 +123,30 @@ export default function EpisodesPage() {
             whileTap={{ scale: 0.98 }}
             disabled={!lang}
           >
-            {/* Square frame */}
-            <div className="relative aspect-square w-72 sm:w-80 md:w-96 rounded-3xl overflow-hidden">
-              {/* soft glow on hover */}
-              <div className="absolute inset-0 rounded-3xl transition-all group-hover:ring-8 group-hover:ring-orange-50" />
-              {/* image */}
-              <img
+            <motion.div
+              className="relative aspect-square w-72 sm:w-80 md:w-96 rounded-3xl overflow-hidden"
+              whileHover={{ scale: 1.08 }}
+            >
+              <motion.img
                 src={s.placeholder}
                 alt={`${s.title} art`}
                 className="absolute inset-0 w-full h-full object-cover rounded-3xl"
                 draggable={false}
+                initial={{ scale: 1 }}
+                whileHover={{ scale: 1.12 }}
+                transition={{ duration: 0.3, ease: 'easeOut' }}
               />
-              {/* bottom overlay title + blurb */}
-              <div className="absolute inset-x-0 bottom-0 p-4">
-                <div className="rounded-2xl bg-white/85 backdrop-blur-sm px-4 py-3 shadow-sm">
-                  <div className="text-base sm:text-lg font-semibold">{s.title}</div>
-                  <div className="text-sm sm:text-base text-zinc-700">{s.blurb}</div>
+              <motion.div
+                className="absolute inset-0 flex items-center justify-center"
+                initial={{ opacity: 0 }}
+                whileHover={{ opacity: 1 }}
+                transition={{ duration: 0.3, ease: 'easeOut' }}
+              >
+                <div className="bg-black/60 rounded-2xl px-6 py-4 text-white text-xl sm:text-2xl font-bold text-center shadow-xl">
+                  {s.blurb}
                 </div>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
           </motion.button>
         ))}
       </motion.div>

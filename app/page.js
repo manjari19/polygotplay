@@ -119,24 +119,6 @@ export default function Home() {
           </motion.button>
         ))}
       </motion.div>
-
-      {/* Continue Button */}
-      <motion.div
-        variants={fadeUp}
-        initial="hidden"
-        animate={selectedLang ? "visible" : "hidden"}
-        className="flex justify-center"
-      >
-        {selectedLang && (
-          <button
-            onClick={handleContinue}
-            className="mt-12 px-10 py-4 rounded-full bg-[#FF7F5C] text-white text-xl font-semibold shadow-md
-                       hover:bg-[#e96d4f] active:translate-y-[1px] transition"
-          >
-            Continue →
-          </button>
-        )}
-      </motion.div>
     </div>
   );
 }
