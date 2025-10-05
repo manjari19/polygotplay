@@ -59,7 +59,7 @@ export default function EpisodesPage() {
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ duration: 0.6 }}
 				>
-					🐼 Choose a Scenario
+						🐼 Choose a Scenario
 				</motion.h1>
 				<motion.p
 					className="text-lg sm:text-xl md:text-2xl text-center mb-4"
@@ -93,9 +93,7 @@ export default function EpisodesPage() {
 						type="button"
 						onClick={() =>
 							lang &&
-							router.push(
-								`/scene?lang=${encodeURIComponent(lang)}&scenario=${s.id}`
-							)
+							router.push(`/play/${s.id}?lang=${encodeURIComponent(lang)}`)
 						}
 						className={`group relative overflow-hidden rounded-3xl transition-all duration-300 flex flex-col items-center justify-center aspect-square w-full h-full focus:outline-none focus-visible:ring-4 focus-visible:ring-orange-300`}
 						whileHover={{ scale: 1.03 }}

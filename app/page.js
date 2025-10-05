@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, useReducedMotion } from "framer-motion";
 
-/* --- Minimal, sleek SVG logo (no emoji) --- */
 function LogoMark({ className = "h-12 w-12" }) {
   return (
     <svg viewBox="0 0 64 64" className={className} aria-hidden="true">
