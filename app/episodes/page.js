@@ -153,12 +153,14 @@ export default function EpisodesPage() {
 
       {/* Footer controls */}
       <div className="mt-10 flex gap-3">
-        <button
+        <motion.button
           onClick={handleBack}
-          className="px-6 py-3 rounded-full border-2 bg-white text-base sm:text-lg hover:bg-[#fff2e9] transition"
+          className="px-10 py-5 rounded-3xl bg-white/80 backdrop-blur-sm text-2xl font-bold shadow-lg hover:bg-white transition"
+          whileHover={{ scale: 1.07 }}
+          whileTap={{ scale: 0.98 }}
         >
-          ← Back
-        </button>
+          ◀ Back
+        </motion.button>
       </div>
     </div>
   );

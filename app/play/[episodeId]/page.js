@@ -137,16 +137,16 @@ export default function PlayPage({ params }) {
       <motion.button
         onClick={handleBack}
         aria-label="Back to scenarios"
-        className="fixed left-4 top-4 z-50 px-4 py-2 rounded-full border bg-white/80 backdrop-blur-sm text-sm font-medium shadow-sm hover:bg-white transition"
-        whileHover={{ scale: 1.03 }}
+        className="fixed left-4 top-4 z-50 px-10 py-5 rounded-3xl bg-white/0 backdrop-blur-sm text-2xl font-bold shadow-lg hover:bg-white transition"
+        whileHover={{ scale: 1.07 }}
         whileTap={{ scale: 0.98 }}
       >
-        ← Back
+        ◀ Back 
       </motion.button>
 
       {/* Updated Title */}
       <motion.h1
-        className="mt-16 text-3xl md:text-4xl font-bold text-center bg-white/60 backdrop-blur-sm rounded-2xl px-6 py-3 shadow-sm"
+        className="mt-16 text-4xl md:text-5xl font-bold text-center bg-white/60 backdrop-blur-sm rounded-2xl px-8 py-5 shadow-sm"
         style={{ fontFamily: 'Arial, sans-serif' }}
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
