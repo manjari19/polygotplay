@@ -54,9 +54,9 @@ const SCENARIO_IMAGE_BY_LANG = {
   },
   fr: {
     intro: "/img/france-intro.png",
-    restaurant: "/img/france-restaurant.png",
-    airport: "/img/france-airport.png",
-    directions: "/img/france-directions.png",
+    restaurant: "/img/fr.png",
+    airport: "/img/france-travel.png",
+    directions: "/img/france-direction.png",
   },
   es: {
     intro: "/img/spain-introduction.png",

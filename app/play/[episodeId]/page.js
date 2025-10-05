@@ -73,10 +73,10 @@ export default function PlayPage({ params }) {
       directions: "/img/chinese-directions.png",
     },
     fr: {
-      intro: "/img/france.png",
-      restaurant: "/img/restaurant.png",
-      airport: "/img/travel.png",
-      directions: "/img/directions.png",
+      intro: "/img/french-intro.png",
+      restaurant: "/img/french-restaurant.png",
+      airport: "/img/french-travel.png",
+      directions: "/img/french-direction.png",
     },
   };
 
