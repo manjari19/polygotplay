@@ -1,8 +1,47 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# PolyGlotPlay
+
+PolyGlotPlay is an AI-powered language learning platform that turns language practice into an interactive, story-driven experience.  
+Learn beginner-level speaking skills naturally through real conversations and immersive scenarios.
+
+---
+
+## Overview
+
+**Languages:** 4  
+**Scenarios:** 4  
+**Story Paths:** Endless  
+
+**Powered by:**
+- **ElevenLabs** – Realistic voice synthesis for lifelike conversations  
+- **Google Gemini** – Intelligent dialogue generation for dynamic, context-aware interactions  
+
+Choose a language and a scenario to begin.  
+Engage in real-time voice conversations with your AI teacher, practicing pronunciation, vocabulary, and real-world speaking skills.  
+By the end, you’ll be ready to communicate confidently and explore new cultures through authentic dialogue.
+
+---
 
 ## Getting Started
 
-First, run the development server:
+### 1. Install dependencies
+
+Before running the app for the first time, install all required dependencies:
+
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+# or
+bun install
+```
+
+---
+
+### 2. Start the development server
+
+Once dependencies are installed, start the development server:
 
 ```bash
 npm run dev
@@ -14,23 +53,47 @@ pnpm dev
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+When the server starts, open your browser and navigate to:
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+[http://localhost:3000](http://localhost:3000)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+### 3. Explore and customize
 
-To learn more about Next.js, take a look at the following resources:
+- Modify the main page at **`app/page.js`** — updates apply instantly with hot reloading.  
+- Review **`README_integrated.md`** for environment variables, API setup, and additional project structure details.  
+- Fonts are optimized and loaded using **next/font**, featuring **Geist**, a typeface from Vercel.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deployment
 
-## Deploy on Vercel
+The easiest way to deploy your Next.js app is through **Vercel**, the platform built by the creators of Next.js.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Refer to the [Next.js Deployment Documentation](https://nextjs.org/docs/deployment) for detailed guidance on production deployment.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## Tech Stack
+
+- **Next.js 14+** – Framework for modern React apps  
+- **React** – UI library for building reusable components  
+- **Tailwind CSS** – Utility-first CSS framework  
+- **Framer Motion** – Animation library for smooth UI transitions  
+- **Google Gemini API** – AI-driven conversation engine  
+- **ElevenLabs API** – Natural, multilingual text-to-speech synthesis  
+
+---
+
+## License
+
+This project is intended for educational, research, and hackathon purposes.  
+Ensure compliance with the respective **API terms of use** before public deployment.
+
+---
+
+## Contributors
+
+This project was developed as part of Stormhacks Hackathon.
+---
