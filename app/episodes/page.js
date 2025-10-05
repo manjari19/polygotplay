@@ -54,7 +54,7 @@ const SCENARIO_IMAGE_BY_LANG = {
   },
   fr: {
     intro: "/img/france-intro.png",
-    restaurant: "/img/fr.png",
+    restaurant: "/img/france-restaurant.png",
     airport: "/img/france-travel.png",
     directions: "/img/france-direction.png",
   },
@@ -65,10 +65,10 @@ const SCENARIO_IMAGE_BY_LANG = {
     directions: "/img/spain-directions.png",
   },
   zh: {
-    intro: "/img/china-intro.png",
+    intro: "/img/intro.png",
     restaurant: "/img/china-restaurant.png",
-    airport: "/img/china-travel.png",
-    directions: "/img/china-directions.png",
+    airport: "/img/travel.png",
+    directions: "/img/directions.png",
   },
 };
 
