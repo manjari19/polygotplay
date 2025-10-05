@@ -83,6 +83,7 @@ export default function PlayPage({ params }) {
   const currentAudioRef = useRef(null);
   const isMountedRef = useRef(true);
   const recordingStartTimeRef = useRef(null);
+  const sessionInitializedRef = useRef(false);
 
   // Keypress handler for 'r' to record
   useEffect(() => {
@@ -110,9 +111,13 @@ export default function PlayPage({ params }) {
 
   // Initialize session on component mount
   useEffect(() => {
+    console.log('🔍 DEBUG: useEffect called with', { episodeId, lang });
     isMountedRef.current = true;
     
-    if (episodeId && lang) {
+    if (episodeId && lang && !sessionInitializedRef.current) {
+      // Mark session as initialized to prevent duplicate calls
+      sessionInitializedRef.current = true;
+      
       // Map frontend IDs to Python scenario names
       const scenarioMap = {
         'restaurant': 'restaurant',
@@ -122,16 +127,19 @@ export default function PlayPage({ params }) {
       };
       
       const scenario = scenarioMap[episodeId] || 'restaurant';
+      console.log('🔍 DEBUG: About to initializeSession with', { scenario, lang });
       initializeSession(scenario, lang);
     }
     
     return () => {
+      console.log('🔍 DEBUG: useEffect cleanup called');
       isMountedRef.current = false;
     };
   }, [episodeId, lang]);
 
   // Initialize session with backend
   async function initializeSession(scenarioId, language) {
+    console.log('🔍 DEBUG: initializeSession called with', { scenarioId, language, sessionId: sessionId });
     setIsLoading(true);
     setError(null);
     
@@ -152,10 +160,17 @@ export default function PlayPage({ params }) {
       }
       
       const data = await response.json();
+      console.log('🔍 DEBUG: Session start response received:', {
+        sessionId: data.sessionId,
+        message: data.message,
+        audioUrl: data.audioUrl
+      });
+      
       setSessionId(data.sessionId);
       setCurrentMessage(data.message);
       setConversation([{ role: 'assistant', text: data.message }]);
       
+      console.log('🔍 DEBUG: About to play initial audio');
       // Play initial audio
       playAudioResponse(data.audioUrl, "assistant");
     } catch (error) {
@@ -222,16 +237,21 @@ export default function PlayPage({ params }) {
 
   // Play audio response
   async function playAudioResponse(audioUrl, role = "assistant") {
+    console.log('🔍 DEBUG: playAudioResponse called with', { audioUrl, role });
     try {
       if (currentAudioRef.current) {
+        console.log('🔍 DEBUG: Stopping previous audio');
         currentAudioRef.current.pause();
         currentAudioRef.current = null;
       }
       setSpeakingRole(role);
       const audio = new Audio(audioUrl);
       currentAudioRef.current = audio;
+      console.log('🔍 DEBUG: About to play audio');
       await audio.play();
+      console.log('🔍 DEBUG: Audio playing successfully');
       audio.onended = () => {
+        console.log('🔍 DEBUG: Audio playback ended');
         setSpeakingRole(null);
       };
     } catch (error) {
