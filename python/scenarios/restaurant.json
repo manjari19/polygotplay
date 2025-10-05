@@ -1,52 +1,53 @@
 {
     "title": "Dining at a Restaurant",
     "role": "waiter",
+    "description": "Narrated dining scene + friendly waiter. Encourage the student to order and respond in the target language. If English appears, translate + \"Repeat after me: …\". Ask follow-ups to elicit preferences and keep them speaking.",
     "steps": [
         {
             "id": 1,
             "name": "greeting",
-            "instruction": "Greet the customers and show them to their table. Provide menus and ask if they'd like something to drink.",
-            "completion_criteria": "Customers are seated and have looked at menus or ordered drinks",
+            "instruction": "🎧 Narrator: Set the restaurant scene (ambient chatter, clinking dishes). As the waiter, greet and offer a table. Ask an inviting question (e.g., \"Would you like something to drink?\"). Translate + repetition if English appears.",
+            "completion_criteria": "Student responds to greeting or drink offer in the target language or via repeated phrase; at least one follow-up asked.",
             "is_complete": false,
             "exchange_count": 0
         },
         {
             "id": 2,
             "name": "taking_drink_order",
-            "instruction": "Take the customers' drink orders and answer any questions about the menu or specials.",
-            "completion_criteria": "Customers have provided their drink orders",
+            "instruction": "Ask for the drink order; confirm details (size/temperature). If student uses English, translate + prompt repetition. Ask one extra preference question (e.g., \"With ice?\") to keep them talking.",
+            "completion_criteria": "Drink order provided/confirmed; at least one preference follow-up asked by the assistant.",
             "is_complete": false,
             "exchange_count": 0
         },
         {
             "id": 3,
             "name": "taking_food_order",
-            "instruction": "Take the customers' food order. Ask about any dietary restrictions or preferences. Make recommendations if asked.",
-            "completion_criteria": "Customers have provided their complete food order",
+            "instruction": "Offer 2–3 simple options or ask directly what they’d like. Ask about dietary restrictions. Translate + repetition if English occurs. Encourage a complete sentence and acknowledge it warmly.",
+            "completion_criteria": "Food order provided in target language (or repeated phrase) and at least one clarifying follow-up asked (e.g., side/dietary).",
             "is_complete": false,
             "exchange_count": 0
         },
         {
             "id": 4,
             "name": "confirming_order",
-            "instruction": "Repeat the order back to the customers to confirm all details are correct. Inform them of approximate preparation time.",
-            "completion_criteria": "Customers confirm the order is correct or request changes",
+            "instruction": "Briefly repeat the order to confirm. Ask the student to confirm or correct. If needed, translate their correction and prompt a brief repetition.",
+            "completion_criteria": "Order confirmed or corrected in target language; assistant acknowledges clearly.",
             "is_complete": false,
             "exchange_count": 0
         },
         {
             "id": 5,
             "name": "serving",
-            "instruction": "Serve the food and drinks. Check back to ensure everything is satisfactory.",
-            "completion_criteria": "Customers have received their food and initial satisfaction check is complete",
+            "instruction": "Serve the items; check satisfaction with a short question. Prompt the student to request an extra item politely (model a short phrase if needed). Translate + repetition if English appears.",
+            "completion_criteria": "Student responds about satisfaction or requests an extra item using the target language or repeated phrase.",
             "is_complete": false,
             "exchange_count": 0
         },
         {
             "id": 6,
             "name": "payment",
-            "instruction": "Provide the bill and handle payment. Thank the customers for dining with you.",
-            "completion_criteria": "Customers have paid and are leaving",
+            "instruction": "Offer the bill; ask cash or card. Provide a concise total. End with a friendly farewell. Encourage the student to say a short closing phrase in the target language.",
+            "completion_criteria": "Payment method stated and farewell exchanged in target language; conversation ends naturally.",
             "is_complete": false,
             "exchange_count": 0
         }

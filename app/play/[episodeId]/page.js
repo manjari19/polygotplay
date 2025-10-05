@@ -96,8 +96,9 @@ export default function PlayPage({ params }) {
   const heading = getScenarioHeading(episodeId, lang);
 
   // back handler (prefer episodes with lang, fallback to history)
-  function handleBack() {
-    if (lang) {
+	function handleBack() {
+		cleanupSession({ endRemote: true });
+		if (lang) {
       router.push(`/episodes?lang=${encodeURIComponent(lang)}`);
     } else {
       router.back();
@@ -110,9 +111,50 @@ export default function PlayPage({ params }) {
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
   const currentAudioRef = useRef(null);
+  const mediaStreamRef = useRef(null);
   const isMountedRef = useRef(true);
+  const isAbortingRef = useRef(false);
   const recordingStartTimeRef = useRef(null);
   const sessionInitializedRef = useRef(false);
+
+  // Cleanup routine: stop audio, stop recording, stop mic tracks, end backend session
+  async function cleanupSession({ endRemote = true } = {}) {
+    try {
+      isAbortingRef.current = true;
+      // Stop any playing audio immediately
+      if (currentAudioRef.current) {
+        try {
+          currentAudioRef.current.pause();
+          currentAudioRef.current.src = "";
+        } catch {}
+        currentAudioRef.current = null;
+      }
+
+      // Stop MediaRecorder if active
+      if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+        try { mediaRecorderRef.current.stop(); } catch {}
+      }
+
+      // Stop microphone tracks
+      if (mediaStreamRef.current) {
+        try { mediaStreamRef.current.getTracks().forEach(t => t.stop()); } catch {}
+        mediaStreamRef.current = null;
+      }
+
+      // Reset local UI state if still mounted
+      if (isMountedRef.current) {
+        setRecording(false);
+        setSpeakingRole(null);
+      }
+
+      // End remote session to free server resources
+      if (endRemote && sessionId) {
+        try {
+          fetch(`http://localhost:8000/api/session/${sessionId}`, { method: "DELETE" }).catch(() => {});
+        } catch {}
+      }
+    } catch {}
+  }
 
   // Keypress handler for 'r' to record
   useEffect(() => {
@@ -142,6 +184,7 @@ export default function PlayPage({ params }) {
   useEffect(() => {
     console.log('🔍 DEBUG: useEffect called with', { episodeId, lang });
     isMountedRef.current = true;
+    isAbortingRef.current = false;
     
     if (episodeId && lang && !sessionInitializedRef.current) {
       // Mark session as initialized to prevent duplicate calls
@@ -163,8 +206,18 @@ export default function PlayPage({ params }) {
     return () => {
       console.log('🔍 DEBUG: useEffect cleanup called');
       isMountedRef.current = false;
+      cleanupSession({ endRemote: true });
     };
   }, [episodeId, lang]);
+
+  // Proactively stop audio when navigating with browser back/forward
+  useEffect(() => {
+    const onPopState = () => {
+      cleanupSession({ endRemote: true });
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, [sessionId]);
 
   // Initialize session with backend
   async function initializeSession(scenarioId, language) {
@@ -309,6 +362,7 @@ export default function PlayPage({ params }) {
       });
 
       mediaRecorderRef.current = mediaRecorder;
+      mediaStreamRef.current = stream;
       audioChunksRef.current = [];
 
       mediaRecorder.ondataavailable = (e) => {
@@ -318,7 +372,7 @@ export default function PlayPage({ params }) {
       mediaRecorder.onstop = async () => {
         const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
 
-        if (isMountedRef.current) {
+        if (isMountedRef.current && !isAbortingRef.current) {
           setAudioURL(URL.createObjectURL(audioBlob));
           await processAudio(audioBlob);
         }

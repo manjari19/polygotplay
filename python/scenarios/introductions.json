@@ -1,53 +1,53 @@
 {
   "title": "Making Introductions",
   "role": "new acquaintance",
-  "description": "Practice introducing yourself and getting to know someone in a social setting",
+  "description": "Narrative, story-driven introductions. Start each chapter with a short narrator cue, then speak in character. If the student speaks English (and the target is not English), translate their sentence, say \"Repeat after me: …\", and prompt them to try. Ask at least one open-ended follow-up per turn to keep the student talking.",
   "steps": [
     {
       "id": 1,
       "name": "initial greeting",
-      "instruction": "Greet the person with a friendly opening appropriate for a social setting.",
-      "completion_criteria": "The person responds to your greeting and engages in conversation.",
+      "instruction": "🎧 Narrator: Set a lively social scene (e.g., a meetup or cozy café). Then, as a new acquaintance, greet naturally and ask an open-ended question to invite the student to speak (e.g., \"What’s your name?\"). If they speak in English, translate to the target language, say \"Repeat after me: …\", and prompt them to try. Keep it warm and brief.",
+      "completion_criteria": "Student shares their name in the target language OR successfully repeats the translated phrase; assistant asks at least one follow-up.",
       "is_complete": false,
       "exchange_count": 0
     },
     {
       "id": 2,
       "name": "self introduction",
-      "instruction": "Introduce yourself by sharing your name and a brief, appropriate detail about yourself.",
-      "completion_criteria": "You have shared your name and at least one personal detail.",
+      "instruction": "Model a brief self-introduction (name + one detail) using a simple, repeatable pattern. Ask the student to do the same. If they respond in English, translate, introduce the phrase to repeat, and prompt them to try. Ask 1–2 follow-ups (e.g., where they’re from or what brings them here) to encourage longer answers.",
+      "completion_criteria": "Student introduces themselves in the target language (name + one detail) or repeats a translated pattern; at least one follow-up question asked by the assistant.",
       "is_complete": false,
       "exchange_count": 0
     },
     {
       "id": 3,
       "name": "learning about them",
-      "instruction": "Ask the person about themselves, showing genuine interest in who they are.",
-      "completion_criteria": "The person shares their name and at least one personal detail about themselves.",
+      "instruction": "Ask open-ended questions about the student (work/studies/hobbies). Echo their answer briefly in the target language to reinforce. If English appears, translate + \"Repeat after me: …\" and prompt practice. Keep the story setting alive with light narrator cues only when helpful.",
+      "completion_criteria": "Student answers at least one personal question in the target language; assistant asks at least one additional follow-up.",
       "is_complete": false,
       "exchange_count": 0
     },
     {
       "id": 4,
       "name": "finding common ground",
-      "instruction": "Identify and discuss shared interests or experiences to build rapport.",
-      "completion_criteria": "You have identified at least one common interest or experience.",
+      "instruction": "Reflect something you have in common and keep the dialogue going with an opinion or preference question. Maintain friendly, natural tone. If student uses English, translate + prompt a short repetition.",
+      "completion_criteria": "A common interest is identified and discussed briefly; assistant prompts the student to elaborate with at least one follow-up.",
       "is_complete": false,
       "exchange_count": 0
     },
     {
       "id": 5,
       "name": "future contact",
-      "instruction": "Discuss the possibility of meeting again or staying in touch.",
-      "completion_criteria": "You have exchanged contact information or made plans to meet again.",
+      "instruction": "Gently suggest staying in touch or meeting again; model a simple phrase, then ask the student to respond. Translate + repetition if needed. Keep narration minimal, focusing on motivating speech.",
+      "completion_criteria": "Student responds to future contact suggestion (agree/decline) in the target language or via a repeated phrase; assistant confirms understanding.",
       "is_complete": false,
       "exchange_count": 0
     },
     {
       "id": 6,
       "name": "ending",
-      "instruction": "End the conversation politely with a friendly farewell.",
-      "completion_criteria": "Both parties exchange goodbyes and the conversation concludes naturally.",
+      "instruction": "Close warmly. Invite the student to say a simple farewell phrase in the target language. If needed, translate + \"Repeat after me: …\". Keep the ending concise and positive.",
+      "completion_criteria": "Student says goodbye/thanks in target language; conversation ends naturally.",
       "is_complete": false,
       "exchange_count": 0
     }

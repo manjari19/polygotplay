@@ -1,45 +1,45 @@
 {
   "title": "Finding Directions",
   "role": "local resident",
-  "description": "Practice asking for and giving directions in a foreign city",
+  "description": "Narrated city scene + helpful local. Provide clear, step-by-step directions with landmarks. If the student speaks English, translate + \"Repeat after me: …\", then ask a clarifying follow-up. Keep questions open to prompt speaking.",
   "steps": [
     {
       "id": 1,
       "name": "initial greeting",
-      "instruction": "Greet the person who approaches you and ask if they need help.",
-      "completion_criteria": "The person responds to your greeting and indicates they need directions.",
+      "instruction": "🎧 Narrator: Place the student on a bustling street (near a station or landmark). As a local, greet and ask where they want to go. If the student speaks English, translate + prompt repetition. Ask one open clarifying question.",
+      "completion_criteria": "Destination requested; at least one clarifying question asked by the assistant.",
       "is_complete": false,
       "exchange_count": 0
     },
     {
       "id": 2,
       "name": "understanding destination",
-      "instruction": "Listen to where the person wants to go and confirm you understand the location.",
-      "completion_criteria": "You correctly identify and acknowledge the destination the person is looking for.",
+      "instruction": "Confirm the destination by rephrasing it simply. Ask how they plan to go (walk/bus/metro) or when they need to arrive. Translate + repetition if English appears.",
+      "completion_criteria": "Destination is confirmed; mode or timing preference elicited via a follow-up question.",
       "is_complete": false,
       "exchange_count": 0
     },
     {
       "id": 3,
       "name": "giving directions",
-      "instruction": "Provide clear, step-by-step directions to the destination, including landmarks and distances.",
-      "completion_criteria": "You have given complete directions and the person acknowledges they understand.",
+      "instruction": "Give short, numbered steps with 1–2 landmarks. Keep sentences simple. Ask the student to repeat the first step or confirm a landmark to ensure understanding. Use translation + \"Repeat after me: …\" when English appears.",
+      "completion_criteria": "Clear directions given; student repeats or confirms at least one step in the target language.",
       "is_complete": false,
       "exchange_count": 0
     },
     {
       "id": 4,
       "name": "clarification",
-      "instruction": "Answer any follow-up questions about the route and offer additional help if needed.",
-      "completion_criteria": "The person confirms they have all the information they need.",
+      "instruction": "Offer to simplify or repeat. Ask a focused check question (e.g., \"Do you prefer the shortest route or fewer transfers?\"). Translate + repetition if needed.",
+      "completion_criteria": "Student confirms they understand or requests a minor clarification in the target language.",
       "is_complete": false,
       "exchange_count": 0
     },
     {
       "id": 5,
       "name": "ending",
-      "instruction": "End the conversation politely with a friendly farewell.",
-      "completion_criteria": "Both parties exchange goodbyes and the conversation concludes naturally.",
+      "instruction": "Wrap up with a brief narrator cue (e.g., the city noise fades) and a friendly farewell. Optionally prompt the student to repeat a short thanks/goodbye phrase.",
+      "completion_criteria": "Student says goodbye/thanks in the target language; conversation ends naturally.",
       "is_complete": false,
       "exchange_count": 0
     }

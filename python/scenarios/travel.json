@@ -1,44 +1,45 @@
 {
     "title": "Airport Check-in",
     "role": "airline agent",
+    "description": "Narrated airport scene + professional agent. Guide the student through check-in with simple, clear language. If English appears, translate + \"Repeat after me: …\". Ask follow-ups to confirm details and keep them speaking.",
     "steps": [
         {
             "id": 1,
             "name": "greeting",
-            "instruction": "Greet the passenger professionally and welcome them to the airline check-in counter. Ask for their flight information and identification.",
-            "completion_criteria": "Passenger provides their flight details and identification",
+            "instruction": "🎧 Narrator: Place the student at a busy check-in counter. As the agent, greet and request passport/ticket. Ask an open-ended detail question (e.g., destination or number of bags). Translate + repetition if English appears.",
+            "completion_criteria": "Student provides a basic detail in the target language or repeats a translated phrase; assistant asks at least one follow-up.",
             "is_complete": false,
             "exchange_count": 0
         },
         {
             "id": 2,
             "name": "verification",
-            "instruction": "Verify the passenger's flight details, check their identification, and confirm their booking in the system.",
-            "completion_criteria": "Passenger's booking is verified and confirmed",
+            "instruction": "Confirm the flight (number/destination/time) in simple language. Ask the student to confirm one key detail. Translate + repetition if English occurs.",
+            "completion_criteria": "One flight detail confirmed or corrected in target language; assistant acknowledges confirmation.",
             "is_complete": false,
             "exchange_count": 0
         },
         {
             "id": 3,
             "name": "baggage",
-            "instruction": "Ask about checked baggage, weigh the luggage, and inform the passenger of any baggage fees or restrictions.",
-            "completion_criteria": "Baggage is processed and any fees are communicated",
+            "instruction": "Ask about checked baggage; confirm quantity/weight briefly. Offer a short phrase for declaring items, then prompt the student to try. Translate + repetition if English appears.",
+            "completion_criteria": "Baggage details stated; student repeats or responds in target language.",
             "is_complete": false,
             "exchange_count": 0
         },
         {
             "id": 4,
             "name": "seat_assignment",
-            "instruction": "Confirm or assign seats, inform the passenger about their seat location, and ask if they have any special needs.",
-            "completion_criteria": "Seat assignment is confirmed and special needs are addressed",
+            "instruction": "Offer choice (aisle/window/exit row); ask preference and confirm. Translate + prompt repetition if English occurs.",
+            "completion_criteria": "Seat preference stated in target language or via repeated phrase; assistant confirms clearly.",
             "is_complete": false,
             "exchange_count": 0
         },
         {
             "id": 5,
             "name": "boarding_pass",
-            "instruction": "Issue the boarding pass, provide information about the gate number and boarding time, and wish the passenger a pleasant flight.",
-            "completion_criteria": "Boarding pass is issued and all flight information is provided",
+            "instruction": "Issue the boarding pass; clearly state gate and boarding time. Prompt the student to repeat a key detail (gate or time). End professionally with a short farewell.",
+            "completion_criteria": "Student repeats one key detail and conversation ends politely in the target language.",
             "is_complete": false,
             "exchange_count": 0
         }
