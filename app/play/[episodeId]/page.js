@@ -471,11 +471,20 @@ export default function PlayPage({ params }) {
       <div className="mt-4 text-lg font-semibold text-center z-10">
         {recording ? (
           <div className="flex flex-col items-center justify-center gap-2">
-            <div className="flex items-center gap-2">
-              <div className="w-2.5 h-2.5 bg-red-500 rounded-full animate-pulse"></div>
-              Recording... Speak clearly and release 'r' to stop
+            <div className="inline-flex items-center gap-3 px-4 py-2 rounded-xl bg-red-600/80 text-white backdrop-blur-md shadow-lg border border-white/20">
+              <span className="relative flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white/60 opacity-60"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
+              </span>
+              <span className="font-semibold tracking-wide">Recording</span>
+              <span className="text-white/90">·</span>
+              <span className="font-medium">Release</span>
+              <span className="font-mono px-2 py-0.5 rounded-md bg-white/20 border border-white/20">R</span>
+              <span className="font-medium">to stop</span>
             </div>
-            <div className="text-sm text-gray-600">Speak loudly and clearly (minimum 1 second)</div>
+            <div className="text-xs text-white/90 bg-black/60 border border-white/10 px-3 py-1 rounded-md backdrop-blur-md">
+              Speak clearly (min 1 sec)
+            </div>
           </div>
         ) : isLoading ? (
           <div className="inline-flex items-center justify-center gap-3 px-4 py-2 rounded-xl bg-black/70 text-white backdrop-blur-md shadow-lg border border-white/20">
@@ -483,9 +492,24 @@ export default function PlayPage({ params }) {
             <span className="tracking-wide">Processing…</span>
           </div>
         ) : sessionId ? (
-          <div className="flex flex-col items-center gap-1">
-            <div>Hold 'r' to record</div>
-            <div className="text-sm text-gray-600">Make sure your microphone is working and speak clearly</div>
+          <div className="flex flex-col items-center gap-2">
+            <div className="inline-flex items-center gap-3 px-4 py-2 rounded-xl bg-white/80 backdrop-blur-md text-gray-900 border border-black/10 shadow-md">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="w-5 h-5 text-gray-700"
+                aria-hidden="true"
+              >
+                <path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v5a3 3 0 0 0 3 3zm-6-3a6 6 0 1 0 12 0h-2a4 4 0 1 1-8 0H6zm5 5.917V20h2v-3.083A7.002 7.002 0 0 0 19 10h-2a5 5 0 1 1-10 0H5a7.002 7.002 0 0 0 6 6.917z"/>
+              </svg>
+              <span className="font-semibold">Hold</span>
+              <span className="font-mono px-2 py-0.5 rounded-md bg-gray-900/90 text-white shadow-sm">R</span>
+              <span className="font-semibold">to record</span>
+            </div>
+            <div className="text-xs text-white/90 bg-black/60 border border-white/10 px-3 py-1 rounded-md backdrop-blur-md">
+              Make sure your mic works and speak clearly
+            </div>
           </div>
         ) : (
           "Initializing session..."
