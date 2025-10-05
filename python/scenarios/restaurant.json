@@ -1,0 +1,54 @@
+{
+    "title": "Dining at a Restaurant",
+    "role": "waiter",
+    "steps": [
+        {
+            "id": 1,
+            "name": "greeting",
+            "instruction": "Greet the customers and show them to their table. Provide menus and ask if they'd like something to drink.",
+            "completion_criteria": "Customers are seated and have looked at menus or ordered drinks",
+            "is_complete": false,
+            "exchange_count": 0
+        },
+        {
+            "id": 2,
+            "name": "taking_drink_order",
+            "instruction": "Take the customers' drink orders and answer any questions about the menu or specials.",
+            "completion_criteria": "Customers have provided their drink orders",
+            "is_complete": false,
+            "exchange_count": 0
+        },
+        {
+            "id": 3,
+            "name": "taking_food_order",
+            "instruction": "Take the customers' food order. Ask about any dietary restrictions or preferences. Make recommendations if asked.",
+            "completion_criteria": "Customers have provided their complete food order",
+            "is_complete": false,
+            "exchange_count": 0
+        },
+        {
+            "id": 4,
+            "name": "confirming_order",
+            "instruction": "Repeat the order back to the customers to confirm all details are correct. Inform them of approximate preparation time.",
+            "completion_criteria": "Customers confirm the order is correct or request changes",
+            "is_complete": false,
+            "exchange_count": 0
+        },
+        {
+            "id": 5,
+            "name": "serving",
+            "instruction": "Serve the food and drinks. Check back to ensure everything is satisfactory.",
+            "completion_criteria": "Customers have received their food and initial satisfaction check is complete",
+            "is_complete": false,
+            "exchange_count": 0
+        },
+        {
+            "id": 6,
+            "name": "payment",
+            "instruction": "Provide the bill and handle payment. Thank the customers for dining with you.",
+            "completion_criteria": "Customers have paid and are leaving",
+            "is_complete": false,
+            "exchange_count": 0
+        }
+    ]
+}

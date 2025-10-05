@@ -1,0 +1,47 @@
+{
+  "title": "Finding Directions",
+  "role": "local resident",
+  "description": "Practice asking for and giving directions in a foreign city",
+  "steps": [
+    {
+      "id": 1,
+      "name": "initial greeting",
+      "instruction": "Greet the person who approaches you and ask if they need help.",
+      "completion_criteria": "The person responds to your greeting and indicates they need directions.",
+      "is_complete": false,
+      "exchange_count": 0
+    },
+    {
+      "id": 2,
+      "name": "understanding destination",
+      "instruction": "Listen to where the person wants to go and confirm you understand the location.",
+      "completion_criteria": "You correctly identify and acknowledge the destination the person is looking for.",
+      "is_complete": false,
+      "exchange_count": 0
+    },
+    {
+      "id": 3,
+      "name": "giving directions",
+      "instruction": "Provide clear, step-by-step directions to the destination, including landmarks and distances.",
+      "completion_criteria": "You have given complete directions and the person acknowledges they understand.",
+      "is_complete": false,
+      "exchange_count": 0
+    },
+    {
+      "id": 4,
+      "name": "clarification",
+      "instruction": "Answer any follow-up questions about the route and offer additional help if needed.",
+      "completion_criteria": "The person confirms they have all the information they need.",
+      "is_complete": false,
+      "exchange_count": 0
+    },
+    {
+      "id": 5,
+      "name": "ending",
+      "instruction": "End the conversation politely with a friendly farewell.",
+      "completion_criteria": "Both parties exchange goodbyes and the conversation concludes naturally.",
+      "is_complete": false,
+      "exchange_count": 0
+    }
+  ]
+}

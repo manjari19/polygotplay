@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, use } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 
@@ -39,16 +39,17 @@ function getScenarioHeading(scenarioId, langCode) {
 }
 
 export default function PlayPage({ params }) {
-  const { episodeId } = params;
+  const { episodeId } = use(params);
   const router = useRouter();
   const searchParams = useSearchParams();
   const lang = searchParams.get("lang");
 
-  // Demo text so you can see bubbles
-  const [turns] = useState([
-    { role: "assistant", text: "Bonjour ! Bienvenue à Paris." },
-    { role: "user", text: "Salut ! Content d'être ici." },
-  ]);
+  // State for API integration
+  const [sessionId, setSessionId] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [conversation, setConversation] = useState([]);
+  const [currentMessage, setCurrentMessage] = useState("");
+  const [error, setError] = useState(null);
 
   const BACKGROUNDS = {
     fr: "/img/france.png",
@@ -57,9 +58,8 @@ export default function PlayPage({ params }) {
     zh: "/img/china.png",
   };
 
-  const assistantText =
-    turns.find((t) => t.role === "assistant")?.text || "Hello!";
-  const userText = turns.find((t) => t.role === "user")?.text || "Hi there!";
+  const assistantText = conversation.find((t) => t.role === "assistant")?.text || "Loading...";
+  const userText = conversation.find((t) => t.role === "user")?.text || "";
 
   // build a natural title
   const heading = getScenarioHeading(episodeId, lang);
@@ -78,17 +78,22 @@ export default function PlayPage({ params }) {
   const [audioURL, setAudioURL] = useState(null);
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
+  const currentAudioRef = useRef(null);
+  const isMountedRef = useRef(true);
+  const recordingStartTimeRef = useRef(null);
 
   // Keypress handler for 'r' to record
   useEffect(() => {
     function onKeyDown(e) {
-      if (e.key === "r" && !recording) {
+      if (e.key === "r" && !recording && sessionId) {
+        e.preventDefault();
         setRecording(true);
         startRecording();
       }
     }
     function onKeyUp(e) {
       if (e.key === "r" && recording) {
+        e.preventDefault();
         setRecording(false);
         stopRecording();
       }
@@ -99,28 +104,190 @@ export default function PlayPage({ params }) {
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("keyup", onKeyUp);
     };
-  }, [recording]);
+  }, [recording, sessionId]);
+
+  // Initialize session on component mount
+  useEffect(() => {
+    isMountedRef.current = true;
+    
+    if (episodeId && lang) {
+      // Map frontend IDs to Python scenario names
+      const scenarioMap = {
+        'restaurant': 'restaurant',
+        'intro': 'introductions',
+        'airport': 'travel',
+        'directions': 'directions'
+      };
+      
+      const scenario = scenarioMap[episodeId] || 'restaurant';
+      initializeSession(scenario, lang);
+    }
+    
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, [episodeId, lang]);
+
+  // Initialize session with backend
+  async function initializeSession(scenarioId, language) {
+    setIsLoading(true);
+    setError(null);
+    
+    const requestData = { scenario: scenarioId, language };
+    console.log('Sending session start request:', requestData);
+    
+    try {
+      const response = await fetch('http://localhost:8000/api/session/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestData)
+      });
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Session start failed:', response.status, errorText);
+        throw new Error(`Failed to start session: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      setSessionId(data.sessionId);
+      setCurrentMessage(data.message);
+      setConversation([{ role: 'assistant', text: data.message }]);
+      
+      // Play initial audio
+      playAudioResponse(data.audioUrl);
+    } catch (error) {
+      console.error('Failed to start session:', error);
+      setError('Failed to start session. Please make sure the backend server is running.');
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  // Process user audio
+  async function processAudio(audioBlob) {
+    if (!sessionId) return;
+    
+    setIsLoading(true);
+    setError(null);
+    
+    const formData = new FormData();
+    formData.append('audio', audioBlob, 'recording.webm');
+    
+    try {
+      const response = await fetch(`http://localhost:8000/api/session/${sessionId}/process`, {
+        method: 'POST',
+        body: formData
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to process audio: ${response.statusText}`);
+      }
+      
+      const data = await response.json();
+      
+      // Update conversation
+      setConversation(prev => [...prev, { role: 'assistant', text: data.message }]);
+      setCurrentMessage(data.message);
+      
+      // Play audio response
+      playAudioResponse(data.audioUrl);
+      
+      // Check if conversation is complete
+      if (data.isComplete) {
+        console.log('Conversation complete!');
+      }
+    } catch (error) {
+      console.error('Failed to process audio:', error);
+      setError('Failed to process audio. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  // Play audio response
+  async function playAudioResponse(audioUrl) {
+    try {
+      // Stop any currently playing audio
+      if (currentAudioRef.current) {
+        currentAudioRef.current.pause();
+        currentAudioRef.current = null;
+      }
+      
+      const audio = new Audio(audioUrl);
+      currentAudioRef.current = audio;
+      await audio.play();
+    } catch (error) {
+      console.error('Failed to play audio:', error);
+    }
+  }
 
   async function startRecording() {
-    if (!navigator.mediaDevices) return;
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const mediaRecorder = new window.MediaRecorder(stream);
-    mediaRecorderRef.current = mediaRecorder;
-    audioChunksRef.current = [];
-    mediaRecorder.ondataavailable = (e) => {
-      if (e.data.size > 0) audioChunksRef.current.push(e.data);
-    };
-    mediaRecorder.onstop = async () => {
-      const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
-      setAudioURL(URL.createObjectURL(audioBlob));
-    };
-    mediaRecorder.start();
+    if (!navigator.mediaDevices) {
+      return;
+    }
+    
+    if (!sessionId) {
+      return;
+    }
+    
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          sampleRate: 44100,
+          channelCount: 1,
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+          latency: 0,
+          googEchoCancellation: true,
+          googNoiseSuppression: true,
+          googAutoGainControl: true
+        }
+      });
+      
+      const mediaRecorder = new window.MediaRecorder(stream, {
+        mimeType: 'audio/webm;codecs=opus'
+      });
+      
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+      
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) audioChunksRef.current.push(e.data);
+      };
+      
+      mediaRecorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        
+        // Check if component is still mounted
+        if (isMountedRef.current) {
+          setAudioURL(URL.createObjectURL(audioBlob));
+          
+          // Send to backend for processing
+          await processAudio(audioBlob);
+        }
+      };
+      
+      recordingStartTimeRef.current = Date.now();
+      mediaRecorder.start(100); // Collect data every 100ms
+    } catch (error) {
+      console.error('Error starting recording:', error);
+      setRecording(false);
+    }
   }
 
   function stopRecording() {
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+      // Check minimum recording duration (1 second)
+      const recordingDuration = Date.now() - recordingStartTimeRef.current;
+      if (recordingDuration < 1000) {
+        setRecording(false);
+        return;
+      }
       mediaRecorderRef.current.stop();
     }
+    // Don't set recording state here, let the onstop handler handle it
   }
 
   return (
@@ -155,12 +322,56 @@ export default function PlayPage({ params }) {
         {heading}
       </motion.h1>
 
+      {/* Error Display */}
+      {error && (
+        <div className="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg max-w-2xl mx-auto">
+          {error}
+        </div>
+      )}
+
       {/* Recording status */}
       <div className="mt-4 text-lg font-semibold text-center">
-        {recording ? "Recording..." : audioURL ? "Recording finished!" : "Hold 'r' to record"}
+        {recording ? (
+          <div className="flex flex-col items-center justify-center gap-2">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+              Recording... Speak clearly and release 'r' to stop
+            </div>
+            <div className="text-sm text-gray-600">
+              Speak loudly and clearly (minimum 1 second)
+            </div>
+          </div>
+        ) : isLoading ? (
+          <div className="flex items-center justify-center gap-2">
+            <div className="w-3 h-3 bg-blue-500 rounded-full animate-spin"></div>
+            Processing...
+          </div>
+        ) : sessionId ? (
+          <div className="flex flex-col items-center gap-1">
+            <div>Hold 'r' to record</div>
+            <div className="text-sm text-gray-600">
+              Make sure your microphone is working and speak clearly
+            </div>
+          </div>
+        ) : (
+          "Initializing session..."
+        )}
       </div>
-      {audioURL && (
-        <audio controls src={audioURL} className="mt-2" />
+      
+      {/* Conversation History */}
+      {conversation.length > 1 && (
+        <div className="mt-8 max-w-2xl mx-auto bg-white/80 backdrop-blur-sm rounded-lg p-4">
+          <h2 className="text-xl font-bold mb-3">Conversation</h2>
+          {conversation.map((msg, idx) => (
+            <div key={idx} className={`mb-2 p-2 rounded ${
+              msg.role === 'assistant'
+                ? 'bg-blue-100 text-blue-900'
+                : 'bg-gray-100 text-gray-900'
+            }`}>
+              <strong>{msg.role === 'assistant' ? 'Assistant' : 'You'}:</strong> {msg.text}
+            </div>
+          ))}
+        </div>
       )}
 
       {/* Characters row (anchored low on screen) */}

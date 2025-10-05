@@ -1,0 +1,46 @@
+{
+    "title": "Airport Check-in",
+    "role": "airline agent",
+    "steps": [
+        {
+            "id": 1,
+            "name": "greeting",
+            "instruction": "Greet the passenger professionally and welcome them to the airline check-in counter. Ask for their flight information and identification.",
+            "completion_criteria": "Passenger provides their flight details and identification",
+            "is_complete": false,
+            "exchange_count": 0
+        },
+        {
+            "id": 2,
+            "name": "verification",
+            "instruction": "Verify the passenger's flight details, check their identification, and confirm their booking in the system.",
+            "completion_criteria": "Passenger's booking is verified and confirmed",
+            "is_complete": false,
+            "exchange_count": 0
+        },
+        {
+            "id": 3,
+            "name": "baggage",
+            "instruction": "Ask about checked baggage, weigh the luggage, and inform the passenger of any baggage fees or restrictions.",
+            "completion_criteria": "Baggage is processed and any fees are communicated",
+            "is_complete": false,
+            "exchange_count": 0
+        },
+        {
+            "id": 4,
+            "name": "seat_assignment",
+            "instruction": "Confirm or assign seats, inform the passenger about their seat location, and ask if they have any special needs.",
+            "completion_criteria": "Seat assignment is confirmed and special needs are addressed",
+            "is_complete": false,
+            "exchange_count": 0
+        },
+        {
+            "id": 5,
+            "name": "boarding_pass",
+            "instruction": "Issue the boarding pass, provide information about the gate number and boarding time, and wish the passenger a pleasant flight.",
+            "completion_criteria": "Boarding pass is issued and all flight information is provided",
+            "is_complete": false,
+            "exchange_count": 0
+        }
+    ]
+}

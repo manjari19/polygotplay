@@ -1,0 +1,55 @@
+{
+  "title": "Making Introductions",
+  "role": "new acquaintance",
+  "description": "Practice introducing yourself and getting to know someone in a social setting",
+  "steps": [
+    {
+      "id": 1,
+      "name": "initial greeting",
+      "instruction": "Greet the person with a friendly opening appropriate for a social setting.",
+      "completion_criteria": "The person responds to your greeting and engages in conversation.",
+      "is_complete": false,
+      "exchange_count": 0
+    },
+    {
+      "id": 2,
+      "name": "self introduction",
+      "instruction": "Introduce yourself by sharing your name and a brief, appropriate detail about yourself.",
+      "completion_criteria": "You have shared your name and at least one personal detail.",
+      "is_complete": false,
+      "exchange_count": 0
+    },
+    {
+      "id": 3,
+      "name": "learning about them",
+      "instruction": "Ask the person about themselves, showing genuine interest in who they are.",
+      "completion_criteria": "The person shares their name and at least one personal detail about themselves.",
+      "is_complete": false,
+      "exchange_count": 0
+    },
+    {
+      "id": 4,
+      "name": "finding common ground",
+      "instruction": "Identify and discuss shared interests or experiences to build rapport.",
+      "completion_criteria": "You have identified at least one common interest or experience.",
+      "is_complete": false,
+      "exchange_count": 0
+    },
+    {
+      "id": 5,
+      "name": "future contact",
+      "instruction": "Discuss the possibility of meeting again or staying in touch.",
+      "completion_criteria": "You have exchanged contact information or made plans to meet again.",
+      "is_complete": false,
+      "exchange_count": 0
+    },
+    {
+      "id": 6,
+      "name": "ending",
+      "instruction": "End the conversation politely with a friendly farewell.",
+      "completion_criteria": "Both parties exchange goodbyes and the conversation concludes naturally.",
+      "is_complete": false,
+      "exchange_count": 0
+    }
+  ]
+}
