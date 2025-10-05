@@ -106,6 +106,18 @@ export default function EpisodesPage() {
 
   return (
     <div className="min-h-screen bg-[#FFF8EE] text-[#1F1F1F] flex flex-col items-center justify-center px-6 py-12">
+      {/* Top-left Back control */}
+      <div className="fixed left-4 top-4 z-50">
+        <motion.button
+          onClick={handleBack}
+          aria-label="Back to home"
+          className="px-8 py-4 rounded-full bg-white/80 backdrop-blur-md text-lg md:text-xl font-semibold shadow-lg hover:bg-white transition"
+          whileHover={{ scale: 1.08 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          ◀ Back
+        </motion.button>
+      </div>
       {/* Header (matches landing) */}
       <motion.div
         variants={fadeUp}
@@ -184,17 +196,7 @@ export default function EpisodesPage() {
         ))}
       </motion.div>
 
-      {/* Footer controls */}
-      <div className="mt-10 flex gap-3">
-        <motion.button
-          onClick={handleBack}
-          className="px-10 py-5 rounded-3xl bg-white/80 backdrop-blur-sm text-2xl font-bold shadow-lg hover:bg-white transition"
-          whileHover={{ scale: 1.07 }}
-          whileTap={{ scale: 0.98 }}
-        >
-          ◀ Back
-        </motion.button>
-      </div>
+      {/* Footer controls removed; Back moved to top-left */}
     </div>
   );
 }

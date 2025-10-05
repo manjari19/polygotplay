@@ -105,6 +105,12 @@ export default function PlayPage({ params }) {
     }
   }
 
+  // home handler: go to landing page and cleanup session/resources
+  function handleHome() {
+    cleanupSession({ endRemote: true });
+    router.push("/");
+  }
+
   // Audio recording state
   const [recording, setRecording] = useState(false);
   const [audioURL, setAudioURL] = useState(null);
@@ -410,16 +416,38 @@ export default function PlayPage({ params }) {
       {/* Subtle horizon wash so foreground reads clearly */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-white/70 via-white/25 to-transparent" />
 
-      {/* Back button (top-left) */}
-      <motion.button
-        onClick={handleBack}
-        aria-label="Back to scenarios"
-        className="fixed left-4 top-4 z-50 px-6 py-3 rounded-full bg-white/80 backdrop-blur-md text-base md:text-lg font-semibold shadow-lg hover:bg-white transition"
-        whileHover={{ scale: 1.06 }}
-        whileTap={{ scale: 0.98 }}
-      >
-        ◀ Back
-      </motion.button>
+      {/* Header controls (top-left) */}
+      <div className="fixed left-4 top-4 z-50 flex gap-3">
+        <motion.button
+          onClick={handleHome}
+          aria-label="Go to home"
+          className="px-8 py-4 rounded-full bg-white/80 backdrop-blur-md text-lg md:text-xl font-semibold shadow-lg hover:bg-white transition"
+          whileHover={{ scale: 1.08 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          <span className="inline-flex items-center gap-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="w-6 h-6"
+              aria-hidden="true"
+            >
+              <path d="M12 3.172 3.172 12H6v7a1 1 0 0 0 1 1h4v-5h2v5h4a1 1 0 0 0 1-1v-7h2.828L12 3.172z"/>
+            </svg>
+            <span>Home</span>
+          </span>
+        </motion.button>
+        <motion.button
+          onClick={handleBack}
+          aria-label="Back to scenarios"
+          className="px-8 py-4 rounded-full bg-white/80 backdrop-blur-md text-lg md:text-xl font-semibold shadow-lg hover:bg-white transition"
+          whileHover={{ scale: 1.08 }}
+          whileTap={{ scale: 0.98 }}
+        >
+          ◀ Back
+        </motion.button>
+      </div>
 
       {/* Title */}
       <motion.h1
