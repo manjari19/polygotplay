@@ -43,6 +43,39 @@ const LANG_LABEL = {
   zh: "🇨🇳 中文",
 };
 
+// Hardcoded scenario image mapping by language
+// Example given: Japanese + restaurant => "japan-restaurnat.png"
+const SCENARIO_IMAGE_BY_LANG = {
+  ja: {
+    intro: "/img/japan-intro.png",
+    restaurant: "/img/japan-restaurant.png",
+    airport: "/img/japan-travel.png",
+    directions: "/img/japan-directions.png",
+  },
+  fr: {
+    intro: "/img/france-intro.png",
+    restaurant: "/img/france-restaurant.png",
+    airport: "/img/france-airport.png",
+    directions: "/img/france-directions.png",
+  },
+  es: {
+    intro: "/img/spain-introduction.png",
+    restaurant: "/img/spain-restaurant.png",
+    airport: "/img/spain-travel.png",
+    directions: "/img/spain-directions.png",
+  },
+  zh: {
+    intro: "/img/china-intro.png",
+    restaurant: "/img/china-restaurant.png",
+    airport: "/img/china-travel.png",
+    directions: "/img/china-directions.png",
+  },
+};
+
+function getScenarioImage(lang, scenarioId, fallback) {
+  return (SCENARIO_IMAGE_BY_LANG[lang] && SCENARIO_IMAGE_BY_LANG[lang][scenarioId]) || fallback;
+}
+
 export default function EpisodesPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -128,7 +161,7 @@ export default function EpisodesPage() {
               whileHover={{ scale: 1.08 }}
             >
               <motion.img
-                src={s.placeholder}
+                src={getScenarioImage(lang, s.id, s.placeholder)}
                 alt={`${s.title} art`}
                 className="absolute inset-0 w-full h-full object-cover rounded-3xl"
                 draggable={false}
