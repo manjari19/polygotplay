@@ -1,129 +1,159 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 
+/* ---------- Brand mark (same as landing) ---------- */
+function LogoMark({ className = "h-12 w-12" }) {
+  return (
+    <svg viewBox="0 0 64 64" className={className} aria-hidden="true">
+      <defs>
+        <linearGradient id="ppg" x1="0" x2="1" y1="0" y2="1">
+          <stop offset="0%" stopColor="#60A5FA" />
+          <stop offset="50%" stopColor="#8B5CF6" />
+          <stop offset="100%" stopColor="#F472B6" />
+        </linearGradient>
+        <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+          <feGaussianBlur stdDeviation="2" result="b" />
+          <feBlend in="SourceGraphic" in2="b" mode="normal" />
+        </filter>
+      </defs>
+      <g filter="url(#soft)">
+        <rect x="6" y="6" width="52" height="52" rx="16" fill="url(#ppg)" />
+        <path d="M24 52c6-2 10-6 12-12" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" opacity=".5" />
+        <circle cx="44" cy="20" r="3" fill="#fff" opacity=".9" />
+      </g>
+    </svg>
+  );
+}
+
+/* ---------- Page data ---------- */
 const SCENARIOS = [
-	{
-		id: "intro",
-		placeholder: "/img/intro.png",
-		blurb: "Greetings, small talk, and names.",
-	},
-	{
-		id: "restaurant",
-		placeholder: "/img/restaurant.png",
-		blurb: "Ordering food and paying.",
-	},
-	{
-		id: "airport",
-		placeholder: "/img/travel.png",
-		blurb: "Check-in, boarding, documents.",
-	},
-	{
-		id: "directions",
-		placeholder: "/img/directions.png",
-		blurb: "Asking the way and transport.",
-	},
+  { id: "intro",           placeholder: "/img/intro.png",      blurb: "Greetings, small talk, and names." },
+  { id: "restaurant",        placeholder: "/img/restaurant.png", blurb: "Ordering food and paying." },
+  { id: "airport",                placeholder: "/img/travel.png",     blurb: "Check-in, boarding, documents." },
+  { id: "directions",   placeholder: "/img/directions.png", blurb: "Asking the way and transport." },
 ];
 
 const LANG_LABEL = {
-	fr: "🇫🇷 Français",
-	ja: "🇯🇵 日本語",
-	es: "🇪🇸 Español",
-	zh: "🇨🇳 中文",
+  fr: "🇫🇷 Français",
+  ja: "🇯🇵 日本語",
+  es: "🇪🇸 Español",
+  zh: "🇨🇳 中文",
 };
 
 export default function EpisodesPage() {
-	const router = useRouter();
-	const searchParams = useSearchParams();
-	const lang = searchParams.get("lang");
-	const [selectedScenario, setSelectedScenario] = useState(null);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const reduceMotion = useReducedMotion();
+  const lang = searchParams.get("lang");
 
-	const langLabel = useMemo(
-		() => (lang && LANG_LABEL[lang]) || "Language not set",
-		[lang]
-	);
+  const langLabel = useMemo(() => (lang && LANG_LABEL[lang]) || "Language not set", [lang]);
 
-	const handleBack = () => {
-		router.push("/");
-	};
+  const fadeUp = {
+    hidden: { opacity: 0, y: reduceMotion ? 0 : 8 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+  };
 
-	return (
-		<div className="min-h-screen h-screen flex flex-col items-center justify-center bg-[#FFF8EE] text-[#1F1F1F]">
-			{/* Title & Subtitle */}
-			<div className="flex flex-col items-center justify-center flex-shrink-0">
-				<motion.h1
-					className="text-3xl sm:text-4xl md:text-5xl font-bold mb-2"
-					initial={{ opacity: 0, y: -20 }}
-					animate={{ opacity: 1, y: 0 }}
-					transition={{ duration: 0.6 }}
-				>
-						🐼 Choose a Scenario
-				</motion.h1>
-				<motion.p
-					className="text-lg sm:text-xl md:text-2xl text-center mb-4"
-					initial={{ opacity: 0, y: -10 }}
-					animate={{ opacity: 1, y: 0 }}
-					transition={{ duration: 0.6, delay: 0.2 }}
-				>
-					Target language:{" "}
-					<span className="px-3 py-1 rounded-full border bg-white text-base md:text-lg font-medium">
-						{langLabel}
-					</span>
-				</motion.p>
-			</div>
+  const gridStagger = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.1 } },
+  };
 
-			{/* Warning if no lang */}
-			{!lang && (
-				<div className="w-full max-w-5xl mb-2 text-[#b45309] bg-[#FFF2CC] border border-[#F6E3A1] px-4 py-2 rounded-xl">
-					No language selected —{" "}
-					<button className="underline" onClick={handleBack}>
-						go back
-					</button>{" "}
-					and pick one.
-				</div>
-			)}
+  const cardVariant = {
+    hidden: { opacity: 0, scale: 0.96 },
+    visible: { opacity: 1, scale: 1, transition: { duration: 0.25, ease: "easeOut" } },
+  };
 
-			{/* Scenario Tiles (responsive grid, fit viewport, home page style) */}
-			<div className="grid grid-cols-1 sm:grid-cols-2 gap-10 sm:gap-14 place-items-center w-full max-w-3xl flex-1">
-				{SCENARIOS.map((s) => (
-					<motion.button
-						key={s.id}
-						type="button"
-						onClick={() =>
-							lang &&
-							router.push(`/play/${s.id}?lang=${encodeURIComponent(lang)}`)
-						}
-						className={`group relative overflow-hidden rounded-3xl transition-all duration-300 flex flex-col items-center justify-center aspect-square w-full h-full focus:outline-none focus-visible:ring-4 focus-visible:ring-orange-300`}
-						whileHover={{ scale: 1.03 }}
-						whileTap={{ scale: 0.97 }}
-						disabled={!lang}
-					>
-						<div className="relative aspect-square w-72 sm:w-80 md:w-96 rounded-3xl overflow-hidden">
-							<img
-								src={s.placeholder}
-								alt={s.id + " art"}
-								className="absolute inset-0 w-full h-full object-cover object-top rounded-3xl shadow-lg"
-								draggable={false}
-							/>
-						</div>
-						<p className="relative z-10 text-lg md:text-xl text-zinc-700 text-center px-4 drop-shadow-lg bg-white/80 rounded-xl py-2 mt-2 w-full">
-							{s.blurb}
-						</p>
-					</motion.button>
-				))}
-			</div>
+  function handleBack() {
+    router.push("/");
+  }
 
-			{/* Back Button only */}
-			<div className="flex flex-row gap-4 mt-2 mb-2">
-				<button
-					onClick={handleBack}
-					className="px-6 py-3 rounded-full border-2 bg-white text-base md:text-lg hover:bg-[#fff2e9] transition"
-				>
-					← Back
-				</button>
-			</div>
-		</div>
-	);
+  return (
+    <div className="min-h-screen bg-[#FFF8EE] text-[#1F1F1F] flex flex-col items-center justify-center px-6 py-12">
+      {/* Header (matches landing) */}
+      <motion.div
+        variants={fadeUp}
+        initial="hidden"
+        animate="visible"
+        className="flex flex-col items-center text-center mb-10"
+      >
+        <div className="flex items-center gap-3 mb-3">
+          <LogoMark />
+          <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight">
+            Choose a <span className="text-blue-600">Scenario</span>
+          </h1>
+        </div>
+        <p className="text-base sm:text-lg text-zinc-700">
+          Target language:{" "}
+          <span className="px-3 py-1 rounded-full border bg-white text-base font-medium">
+            {langLabel}
+          </span>
+        </p>
+      </motion.div>
+
+      {/* No language selected banner */}
+      {!lang && (
+        <div className="w-full max-w-4xl mb-6 text-[#b45309] bg-[#FFF2CC] border border-[#F6E3A1] px-4 py-2 rounded-xl">
+          No language selected —{" "}
+          <button className="underline" onClick={handleBack}>
+            go back
+          </button>{" "}
+          and pick one.
+        </div>
+      )}
+
+      {/* Scenario Tiles — 2x2 large squares */}
+      <motion.div
+        variants={gridStagger}
+        initial="hidden"
+        animate="visible"
+        className="grid grid-cols-1 sm:grid-cols-2 gap-10 sm:gap-14 place-items-center"
+      >
+        {SCENARIOS.map((s) => (
+          <motion.button
+            key={s.id}
+            type="button"
+            variants={cardVariant}
+            onClick={() => lang && router.push(`/play/${s.id}?lang=${encodeURIComponent(lang)}`)}
+            className="group relative overflow-hidden rounded-3xl transition-all duration-300 shadow-xl focus:outline-none focus-visible:ring-4 focus-visible:ring-orange-300"
+            whileHover={{ scale: 1.06 }}
+            whileTap={{ scale: 0.98 }}
+            disabled={!lang}
+          >
+            {/* Square frame */}
+            <div className="relative aspect-square w-72 sm:w-80 md:w-96 rounded-3xl overflow-hidden">
+              {/* soft glow on hover */}
+              <div className="absolute inset-0 rounded-3xl transition-all group-hover:ring-8 group-hover:ring-orange-50" />
+              {/* image */}
+              <img
+                src={s.placeholder}
+                alt={`${s.title} art`}
+                className="absolute inset-0 w-full h-full object-cover rounded-3xl"
+                draggable={false}
+              />
+              {/* bottom overlay title + blurb */}
+              <div className="absolute inset-x-0 bottom-0 p-4">
+                <div className="rounded-2xl bg-white/85 backdrop-blur-sm px-4 py-3 shadow-sm">
+                  <div className="text-base sm:text-lg font-semibold">{s.title}</div>
+                  <div className="text-sm sm:text-base text-zinc-700">{s.blurb}</div>
+                </div>
+              </div>
+            </div>
+          </motion.button>
+        ))}
+      </motion.div>
+
+      {/* Footer controls */}
+      <div className="mt-10 flex gap-3">
+        <button
+          onClick={handleBack}
+          className="px-6 py-3 rounded-full border-2 bg-white text-base sm:text-lg hover:bg-[#fff2e9] transition"
+        >
+          ← Back
+        </button>
+      </div>
+    </div>
+  );
 }

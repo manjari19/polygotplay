@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 
 // readable labels for nicer titles
@@ -40,6 +40,7 @@ function getScenarioHeading(scenarioId, langCode) {
 
 export default function PlayPage({ params }) {
   const { episodeId } = params;
+  const router = useRouter();
   const searchParams = useSearchParams();
   const lang = searchParams.get("lang");
 
@@ -63,6 +64,15 @@ export default function PlayPage({ params }) {
   // build a natural title
   const heading = getScenarioHeading(episodeId, lang);
 
+  // back handler (prefer episodes with lang, fallback to history)
+  function handleBack() {
+    if (lang) {
+      router.push(`/episodes?lang=${encodeURIComponent(lang)}`);
+    } else {
+      router.back();
+    }
+  }
+
   return (
     <div
       className="relative min-h-screen text-[#1F1F1F] flex flex-col items-center overflow-hidden"
@@ -73,9 +83,20 @@ export default function PlayPage({ params }) {
         backgroundPosition: "center",
       }}
     >
+      {/* Back button (top-left) */}
+      <motion.button
+        onClick={handleBack}
+        aria-label="Back to scenarios"
+        className="fixed left-4 top-4 z-50 px-4 py-2 rounded-full border bg-white/80 backdrop-blur-sm text-sm font-medium shadow-sm hover:bg-white transition"
+        whileHover={{ scale: 1.03 }}
+        whileTap={{ scale: 0.98 }}
+      >
+        ← Back
+      </motion.button>
+
       {/* Updated Title */}
       <motion.h1
-        className="mt-6 text-3xl md:text-4xl font-bold text-center bg-white/60 backdrop-blur-sm rounded-2xl px-6 py-3 shadow-sm"
+        className="mt-16 text-3xl md:text-4xl font-bold text-center bg-white/60 backdrop-blur-sm rounded-2xl px-6 py-3 shadow-sm"
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}

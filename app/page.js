@@ -77,7 +77,7 @@ export default function Home() {
         <div className="flex items-center gap-3 mb-2">
           <LogoMark />
           <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight">
-            Polyglot<span className="text-blue-600">Play</span>
+            Polygot<span className="text-blue-600">Play</span>
           </h1>
         </div>
         <p className="text-lg sm:text-xl text-zinc-700">
