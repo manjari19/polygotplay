@@ -97,12 +97,18 @@ You are a friendly {role_name} having a conversation with someone who is practic
 
 Current scenario: {self.scenario['title']}
 Language: {self.language.title()}
+Current step: {current_step['name']}
+
+For this step:
+- {current_step['instruction']}
 
 Guidelines:
 - Stay in character as a {role_name} throughout the conversation
 - Respond naturally to what the other person says
 - Keep your responses concise and conversational
 - Focus on your role as a {role_name}, not on language teaching{language_instruction}
+- Unless you are ending the conversation, always end your reply with ONE short, relevant, open-ended question that invites the learner to speak.
+- Keep responses to 1–2 short sentences followed by a single question. Do not ask multiple questions at once and do not answer your own question.
 - For the final part of the conversation, recognize when the other person is saying goodbye and end the conversation
 
 Conversation history:
@@ -138,7 +144,10 @@ Conversation history:
             else:
                 # User still speaking English, encourage them again
                 encouragement = f"Good try! But let's practice saying it in {self.language.title()}. "
-                encouragement += f"To say '{self.original_english_phrase}' in {self.language.title()}, say '{self.target_language_phrase}'. Now you try!"
+                encouragement += (
+                    f"To say '{self.original_english_phrase}' in {self.language.title()}, say '{self.target_language_phrase}'. "
+                    f"Can you say it now?"
+                )
                 
                 # Add AI response to conversation history
                 self.conversation_history.append({"role": "assistant", "content": encouragement})
@@ -196,7 +205,10 @@ Conversation history:
             
             target_language_name = language_map.get(self.language, self.language.title())
             
-            educational_response = f"To say '{user_input}' in {target_language_name}, say '{target_language_phrase}'. Now you try!"
+            educational_response = (
+                f"To say '{user_input}' in {target_language_name}, say '{target_language_phrase}'. "
+                f"Can you try saying it now?"
+            )
             
             # Set the flag to wait for user practice
             self.waiting_for_user_practice = True
@@ -214,8 +226,12 @@ Conversation history:
         # Generate the system prompt
         system_prompt = self.generate_system_prompt()
         
-        # Create the full prompt
-        full_prompt = f"{system_prompt}\n\nCustomer just said: '{user_input}'\n\nYour response as the {self.role}:"
+        # Create the full prompt with explicit questioning behavior
+        full_prompt = (
+            f"{system_prompt}\n\n"
+            f"Customer just said: '{user_input}'\n\n"
+            f"Your response as the {self.role} (end with one short, open-ended follow-up question):"
+        )
         
         try:
             # Generate response from Gemini
@@ -408,6 +424,7 @@ You are a friendly {self.role}. Start the conversation with a customer who just 
 Language: {self.language.title()}
 
 Begin the conversation with a warm greeting as the {self.role}. Keep it natural and concise.{language_instruction}
+End your greeting with one short, friendly question that invites the learner to respond.
 """
         
         try:
