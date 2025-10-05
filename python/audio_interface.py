@@ -32,16 +32,11 @@ class AudioInterface:
         
         # Voice mappings for different languages
         self.voice_mappings = {
-            "english": "JBFqnCBsd6RMkjVDRZzb",
-            "spanish": "JBFqnCBsd6RMkjVDRZzb",
-            "french": "JBFqnCBsd6RMkjVDRZzb",
-            "chinese": "JBFqnCBsd6RMkjVDRZzb",
-            "japanese": "JBFqnCBsd6RMkjVDRZzb",
-            "german": "JBFqnCBsd6RMkjVDRZzb",
-            "italian": "JBFqnCBsd6RMkjVDRZzb",
-            "portuguese": "JBFqnCBsd6RMkjVDRZzb",
-            "russian": "JBFqnCBsd6RMkjVDRZzb",
-            "korean": "JBFqnCBsd6RMkjVDRZzb"
+            "english": "UpphzPau5vxibPYV2NeV",
+            "spanish": "9EU0h6CVtEDS6vriwwq5",
+            "french": "ohItIVrXTBI80RrUECOD",
+            "chinese": "ZL9dtgFhmkTzAHUUtQL8",
+            "japanese": "3JDquces8E8bkmvbh6Bc"
         }
     
     def record_audio(self, max_seconds=5):
